@@ -150,7 +150,7 @@ export default function Home() {
       <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
         <div className="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
           <a href="/">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 md:-ml-10">
             <span className="material-symbols-outlined text-secondary" data-icon="terminal">
               terminal
             </span>
@@ -223,7 +223,7 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="pt-16">
+      <main className="pt-18">
         {/* Hero Section */}
         <section
           className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 overflow-hidden w-full"
@@ -235,10 +235,10 @@ export default function Home() {
           </div>
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-center justify-between gap-12">
             {/* Mobile: Image Top, Desktop: Image Right */}
-            <div className="md:order-2 w-full md:w-1/2 flex justify-center">
-              <div className="relative group">
+            <div className="md:order-2 w-full md:w-1/2 flex justify-center md:justify-end">
+              <div className="relative group md:mr-10">
                 <div className="absolute -inset-4 bg-secondary/20 rounded-full blur-2xl group-hover:bg-secondary/30 transition-all duration-500" />
-                <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden flex-shrink-0">
+                <div className="relative w-70 h-70 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden flex-shrink-0">
                   <Image
                     src="/pictures/me.png"
                     alt="Darmawan Profile"
@@ -250,7 +250,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
+            <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left md:ml-2">
               <p className="font-label-mono text-label-mono text-secondary mb-4 tracking-[0.2em] uppercase">
                 HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
               </p>
@@ -264,13 +264,13 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                 <a
-                  className="bg-secondary text-on-secondary px-8 py-3 rounded-lg font-label-mono text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
+                  className="bg-secondary text-on-secondary px-8 py-3 rounded-xl font-label-mono text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
                   href="#works"
                 >
                   VIEW WORKS
                 </a>
                 <a
-                  className="border border-outline-variant px-8 py-3 rounded-lg font-label-mono text-label-mono hover:bg-surface-variant/30 transition-all"
+                  className="border border-outline-variant px-8 py-3 rounded-xl font-label-mono text-label-mono hover:bg-surface-variant/30 transition-all"
                   href="#contact"
                 >
                   HIRE ME
@@ -298,7 +298,8 @@ export default function Home() {
                 className="glass-card rounded-3xl p-8 group hover:border-secondary/50 transition-colors flex flex-col items-center text-center"
               >
                 <span
-                  className="material-symbols-outlined text-7xl text-secondary mb-6 block"
+                  className="material-symbols-outlined text-secondary mb-6 block"
+                  style={{ fontSize: '40px' }}
                   data-icon={service.icon}
                 >
                   {service.icon}
