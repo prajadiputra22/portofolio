@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { id: "home", label: "Home", icon: "home" },
@@ -124,6 +124,16 @@ const blogPosts = [
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const worksScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollWorks = (direction: "left" | "right") => {
+    if (!worksScrollRef.current) return;
+    const scrollAmount = 360;
+    worksScrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
@@ -150,7 +160,7 @@ export default function Home() {
       <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
         <div className="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
           <a href="/">
-          <div className="flex items-center gap-2 md:-ml-10">
+          <div className="flex items-center gap-2 md:-ml-12">
             <span className="material-symbols-outlined text-secondary" data-icon="terminal">
               terminal
             </span>
@@ -160,7 +170,7 @@ export default function Home() {
           </div>
           </a>
           {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex md:-mr-14 items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.id}
@@ -236,9 +246,9 @@ export default function Home() {
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-center justify-between gap-12">
             {/* Mobile: Image Top, Desktop: Image Right */}
             <div className="md:order-2 w-full md:w-1/2 flex justify-center md:justify-end">
-              <div className="relative group md:mr-10">
-                <div className="absolute -inset-4 bg-secondary/20 rounded-full blur-2xl group-hover:bg-secondary/30 transition-all duration-500" />
-                <div className="relative w-70 h-70 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden flex-shrink-0">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
+                <div className="relative w-90 h-90 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
                   <Image
                     src="/pictures/me.png"
                     alt="Darmawan Profile"
@@ -250,7 +260,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left md:ml-2">
+            <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
               <p className="font-label-mono text-label-mono text-secondary mb-4 tracking-[0.2em] uppercase">
                 HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
               </p>
@@ -282,7 +292,7 @@ export default function Home() {
 
         {/* Services Section */}
         <section
-          className="py-20 px-margin-mobile md:px-margin-desktop overflow-hidden w-full"
+          className="py-24 px-margin-mobile md:px-margin-desktop overflow-hidden"
           id="services"
         >
           <div className="mb-16">
@@ -320,7 +330,7 @@ export default function Home() {
 
         {/* Works Section */}
         <section className="py-24 bg-surface-container-lowest" id="works">
-          <div className="px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+          <div className="px-margin-mobile md:px-margin-desktop overflow-hidden">
             <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-4">
@@ -328,56 +338,82 @@ export default function Home() {
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
-              <p className="font-label-mono text-label-mono text-on-surface-variant md:max-w-xs uppercase">
-                A curation of technical solutions and creative builds.
-              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {projects.map((project) => (
-                <div
-                  key={project.title}
-                  className="group relative overflow-hidden bg-surface-container rounded-lg border border-outline-variant/30 transition-all hover:-translate-y-2"
-                >
-                  <div className="aspect-video relative overflow-hidden">
-                    <img
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      alt={project.alt}
-                      src={project.image}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent opacity-60" />
-                  </div>
-                  <div className="p-8">
-                    <div className="flex gap-2 mb-4">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="bg-secondary/10 text-secondary text-caption font-label-mono px-3 py-1 rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+            <div className="relative">
+              {projects.length >= 4 && (
+                <>
+                  <button
+                    aria-label="Previous project"
+                    onClick={() => scrollWorks("left")}
+                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-10 h-10 items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest hover:border-secondary hover:text-secondary transition-colors"
+                  >
+                    <span className="material-symbols-outlined" data-icon="chevron_left">
+                      chevron_left
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Next project"
+                    onClick={() => scrollWorks("right")}
+                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-10 h-10 items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest hover:border-secondary hover:text-secondary transition-colors"
+                  >
+                    <span className="material-symbols-outlined" data-icon="chevron_right">
+                      chevron_right
+                    </span>
+                  </button>
+                </>
+              )}
+              <div
+                ref={worksScrollRef}
+                className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {projects.map((project) => (
+                  <div
+                    key={project.title}
+                    className="group relative overflow-hidden bg-surface-container rounded-xl border border-outline-variant/30 transition-all hover:-translate-y-2 flex-shrink-0 w-[280px] sm:w-[320px] snap-start"
+                  >
+                    <div className="aspect-video relative overflow-hidden">
+                      <img
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        alt={project.alt}
+                        src={project.image}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent opacity-60" />
                     </div>
-                    <h3 className="font-headline-md text-headline-md mb-2">{project.title}</h3>
-                    <p className="text-on-surface-variant mb-6">{project.description}</p>
-                    <a
-                      className="text-secondary font-label-mono text-label-mono flex items-center gap-2 hover:gap-4 transition-all"
-                      href="#"
-                    >
-                      CASE STUDY{" "}
-                      <span className="material-symbols-outlined" data-icon="arrow_right_alt">
-                        arrow_right_alt
-                      </span>
-                    </a>
+                    <div className="p-6">
+                      <div className="flex gap-2 mb-3">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-secondary/10 text-secondary text-caption font-label-mono px-3 py-1 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="font-headline-md text-lg mb-2">{project.title}</h3>
+                      <p className="text-on-surface-variant text-sm mb-4 line-clamp-3">
+                        {project.description}
+                      </p>
+                      <a
+                        className="text-secondary font-label-mono text-label-mono flex items-center gap-2 hover:gap-4 transition-all"
+                        href="#"
+                      >
+                        CASE STUDY{" "}
+                        <span className="material-symbols-outlined" data-icon="arrow_right_alt">
+                          arrow_right_alt
+                        </span>
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         {/* Skills & Education Section */}
         <section
-          className="py-24 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto"
+          className="py-24 px-margin-mobile md:px-margin-desktop"
           id="skills"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -449,7 +485,7 @@ export default function Home() {
 
         {/* Blog Section */}
         <section className="py-24 bg-surface-container-lowest" id="blog">
-          <div className="px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+          <div className="px-margin-mobile md:px-margin-desktop">
             <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-4">
@@ -457,15 +493,12 @@ export default function Home() {
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
-              <p className="font-label-mono text-label-mono text-on-surface-variant md:max-w-xs uppercase">
-                Thoughts on architecture, performance, and the web.
-              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {blogPosts.map((post) => (
                 <div
                   key={post.title}
-                  className="group bg-surface-container rounded-lg border border-outline-variant/30 overflow-hidden transition-all hover:border-secondary/30"
+                  className="group bg-surface-container rounded-3xl border border-outline-variant/30 overflow-hidden transition-all hover:border-secondary/30"
                 >
                   <div className="aspect-video bg-surface-variant/30 flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -503,7 +536,7 @@ export default function Home() {
 
         {/* Contact Section */}
         <section className="py-24 bg-surface-container-low" id="contact">
-          <div className="px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+          <div className="px-margin-mobile md:px-margin-desktop">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               <div>
                 <h2 className="font-display-lg-mobile text-display-lg-mobile mb-6">
@@ -522,9 +555,9 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
-                        Office Location
+                        Location
                       </p>
-                      <p className="font-body-md">Jakarta, Indonesia</p>
+                      <p className="font-body-md">Sukabumi City, West Java, Indonesia</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
@@ -537,7 +570,7 @@ export default function Home() {
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
                         Phone Number
                       </p>
-                      <p className="font-body-md">+62 821 2345 6789</p>
+                      <p className="font-body-md">+62 857 1794 5499</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
@@ -550,12 +583,12 @@ export default function Home() {
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
                         Email Address
                       </p>
-                      <p className="font-body-md">hi@darmawan.dev</p>
+                      <p className="font-body-md">darmawanprajadiputra@gmail.com</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="glass-card p-8 rounded-xl">
+              <div className="glass-card p-8 rounded-3xl">
                 <form
                   className="space-y-6"
                   onSubmit={(e) => {
@@ -607,9 +640,9 @@ export default function Home() {
 
       {/* Footer Shell */}
       <footer className="w-full py-10 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20">
-        <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-4">
           <span className="font-label-mono text-label-mono text-secondary uppercase">
-            DARMAWAN
+            DARMAWAN SUKA PRAJADIPUTRA
           </span>
           <p className="font-caption text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-all">
             © 2024 Darmawan. Built with Precision.
@@ -617,21 +650,21 @@ export default function Home() {
           <div className="flex gap-6">
             <a
               className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="#"
+              href="https://www.linkedin.com/in/darmawan-suka-prajadiputra-466029290/"
             >
               LinkedIn
             </a>
             <a
               className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="#"
+              href="https://github.com/prajadiputra22"
             >
               GitHub
             </a>
             <a
               className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="#"
+              href="https://www.instagram.com/_prajadiputra?igsh=MWRxM3dzM2J3ZGU0"
             >
-              Twitter
+              Instagram
             </a>
           </div>
         </div>
