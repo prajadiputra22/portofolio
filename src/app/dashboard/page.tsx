@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 const sidebarNav = [
-  { icon: "dashboard", label: "Dashboard", active: true },
-  { icon: "person", label: "Manage Profile", active: false },
-  { icon: "work", label: "Manage Works", active: false },
-  { icon: "psychology", label: "Manage Skills", active: false },
-  { icon: "rss_feed", label: "Manage Blog", active: false },
+  { icon: "dashboard", label: "Dashboard", href: "/dashboard" },
+  { icon: "person", label: "Manage Profile", href: "/dashboard/manage-profile" },
+  { icon: "work", label: "Manage Works", href: "/dashboard/manage-works" },
+  { icon: "psychology", label: "Manage Skills", href: "/dashboard/manage-skills" },
+  { icon: "rss_feed", label: "Manage Blog", href: "/dashboard/manage-blog" },
 ];
 
 const quickActions = [
@@ -131,6 +134,8 @@ const storage = [
 ];
 
 export default function Dashboard() {
+  const pathname = usePathname();
+
   return (
     <div
       className="relative flex h-screen w-full bg-[#15181e] dark overflow-hidden"
@@ -159,20 +164,27 @@ export default function Dashboard() {
           </h2>
         </div>
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-          {sidebarNav.map((item) => (
-            <a
-              key={item.label}
-              className={
-                item.active
-                  ? "flex items-center gap-3 px-3 py-2 rounded bg-primary/10 text-primary font-bold"
-                  : "flex items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-[#2b3140] hover:text-white transition-colors"
-              }
-              href="#"
-            >
-              <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
-            </a>
-          ))}
+          {sidebarNav.map((item) => {
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === "/dashboard"
+                : pathname?.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={
+                  isActive
+                    ? "flex items-center gap-3 px-3 py-2 rounded bg-primary/10 text-primary font-bold"
+                    : "flex items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-[#2b3140] hover:text-white transition-colors"
+                }
+              >
+                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                <span className="text-sm">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
         <div className="p-4 border-t border-[#2b3140]">
           <div className="flex items-center gap-3 px-2">

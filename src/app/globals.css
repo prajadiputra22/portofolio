@@ -30,3 +30,19 @@ body {
   color: var(--foreground);
   scroll-behavior: smooth;
 }
+
+.glass-panel {
+  background: rgba(16, 20, 21, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(69, 70, 77, 0.3);
+}
+
+.row-hover:hover {
+  background-color: rgba(50, 53, 55, 0.4);
+}
+
+.sidebar-link-active {
+  color: #7bd0ff;
+  background: rgba(0, 166, 224, 0.1);
+  border-right: 2px solid #7bd0ff;
+}

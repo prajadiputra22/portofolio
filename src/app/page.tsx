@@ -57,38 +57,15 @@ const projects = [
   },
 ];
 
-const education = [
-  {
-    year: "2018 - 2022",
-    title: "Bachelor of Computer Science",
-    place: "Global Institute of Technology",
-    note: "Focused on Software Architecture and Database Systems.",
-    active: true,
-  },
-  {
-    year: "2023",
-    title: "Advanced Web Architecture",
-    place: "Digital Academy Excellence",
-    note: "Certified Professional Full-Stack Developer.",
-    active: false,
-  },
-];
-
 const skillTags = [
-  "Python",
-  "Laravel",
-  "Node.Js",
-  "Next.Js",
-  "Tailwind CSS",
-  "MySQL",
-  "JavaScript",
-  "Mikrotik",
-];
-
-const skillBars = [
-  { label: "Frontend Engineering", value: 95 },
-  { label: "Backend Logic", value: 88 },
-  { label: "Database Optimization", value: 82 },
+  { name: "Python", icon: "https://cdn.simpleicons.org/python/e0e3e5" },
+  { name: "Laravel", icon: "https://cdn.simpleicons.org/laravel/e0e3e5" },
+  { name: "Node.Js", icon: "https://cdn.simpleicons.org/nodedotjs/e0e3e5" },
+  { name: "Next.Js", icon: "https://cdn.simpleicons.org/nextdotjs/e0e3e5" },
+  { name: "Tailwind CSS", icon: "https://cdn.simpleicons.org/tailwindcss/e0e3e5" },
+  { name: "MySQL", icon: "https://cdn.simpleicons.org/mysql/e0e3e5" },
+  { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/e0e3e5" },
+  { name: "Mikrotik", icon: "https://cdn.simpleicons.org/mikrotik/e0e3e5" },
 ];
 
 const blogPosts = [
@@ -236,7 +213,7 @@ export default function Home() {
       <main className="pt-18">
         {/* Hero Section */}
         <section
-          className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 overflow-hidden w-full"
+          className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 py-16 md:py-0 overflow-hidden w-full"
           id="home"
         >
           <div className="absolute inset-0 z-0 pointer-events-none">
@@ -245,15 +222,15 @@ export default function Home() {
           </div>
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-center justify-between gap-12">
             {/* Mobile: Image Top, Desktop: Image Right */}
-            <div className="md:order-2 w-full md:w-1/2 flex justify-center md:justify-end">
+            <div className="hidden md:order-2 md:w-1/2 md:flex md:justify-end">
               <div className="relative group">
-                <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
-                <div className="relative w-90 h-90 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
+                <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
+                <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
                   <Image
                     src="/pictures/me.png"
                     alt="Darmawan Profile"
                     fill
-                    sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, 256px"
+                    sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 256px, 192px"
                     className="object-cover"
                     priority
                   />
@@ -261,26 +238,26 @@ export default function Home() {
               </div>
             </div>
             <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
-              <p className="font-label-mono text-label-mono text-secondary mb-4 tracking-[0.2em] uppercase">
+              <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
                 HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
               </p>
-              <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg mb-6 leading-tight">
+              <h1 className="font-display-lg-mobile text-[32px] leading-[38px] md:font-display-lg md:text-display-lg mb-4 md:mb-6">
                 Welcome To My <span className="italic font-light-bold">Portfolio</span>
               </h1>
-              <p className="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-xl mx-auto md:mx-0">
+              <p className="font-body-lg text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-10 max-w-xl mx-auto md:mx-0">
                 A passionate web developer dedicated to building high-performance, scalable
                 digital experiences. I balance complex backend engineering with refined frontend
                 aesthetics to create architectural integrity in every pixel.
               </p>
-              <div className="flex flex-wrap justify-center md:justify-start gap-4">
+              <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-0">
                 <a
-                  className="bg-secondary text-on-secondary px-8 py-3 rounded-xl font-label-mono text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
+                  className="bg-secondary text-on-secondary px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
                   href="#works"
                 >
                   VIEW WORKS
                 </a>
                 <a
-                  className="border border-outline-variant px-8 py-3 rounded-xl font-label-mono text-label-mono hover:bg-surface-variant/30 transition-all"
+                  className="border border-outline-variant px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono hover:bg-surface-variant/30 transition-all"
                   href="#contact"
                 >
                   HIRE ME
@@ -411,76 +388,58 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Skills & Education Section */}
+        {/* Skills Section */}
         <section
-          className="py-24 px-margin-mobile md:px-margin-desktop"
+          className="py-6 overflow-hidden"
           id="skills"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Part A: Education */}
-            <div>
-              <div className="mb-12">
-                <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-4">
-                  Education
-                </h2>
-                <div className="h-1 w-20 bg-secondary" />
-              </div>
-              <div className="space-y-8">
-                {education.map((item) => (
-                  <div key={item.title} className="relative pl-8 border-l border-outline-variant">
-                    <div
-                      className={`absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full ${
-                        item.active ? "bg-secondary" : "bg-outline"
-                      }`}
-                    />
-                    <span className="font-label-mono text-caption text-secondary block mb-2">
-                      {item.year}
-                    </span>
-                    <h4 className="font-headline-md text-headline-md mb-1">{item.title}</h4>
-                    <p className="text-on-surface-variant">{item.place}</p>
-                    <p className="text-caption text-on-tertiary-container mt-2 italic">
-                      {item.note}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Part B: Skills */}
-            <div>
-              <div className="mb-12">
-                <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-4">
-                  Stack &amp; Skills
-                </h2>
-                <div className="h-1 w-20 bg-secondary" />
-              </div>
-              <div className="flex flex-wrap gap-3 mb-12">
-                {skillTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-6 py-2 bg-surface-variant/30 border border-outline-variant rounded-full font-label-mono text-label-mono hover:border-secondary transition-colors cursor-default"
-                  >
-                    {tag}
+          <div className="px-margin-mobile md:px-margin-desktop mb-10">
+            <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-4">
+              Stack &amp; Skills
+            </h2>
+            <div className="h-1 w-20 bg-secondary" />
+          </div>
+          <div
+            className="relative w-full overflow-hidden group/marquee"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+            }}
+          >
+            <div className="flex w-max gap-3 md:gap-10 animate-marquee group-hover/marquee:[animation-play-state:paused]">
+              {[...skillTags, ...skillTags].map((skill, idx) => (
+                <div
+                  key={`${skill.name}-${idx}`}
+                  className="flex items-center gap-1.5 md:gap-3 shrink-0 px-3 py-1.5 md:px-6 md:py-3 bg-surface-variant/30 border border-outline-variant rounded-full hover:border-secondary transition-colors"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={skill.icon}
+                    alt={skill.name}
+                    className="w-4 h-4 md:w-6 md:h-6 object-contain shrink-0"
+                  />
+                  <span className="font-label-mono text-[10px] md:text-label-mono uppercase tracking-wider whitespace-nowrap">
+                    {skill.name}
                   </span>
-                ))}
-              </div>
-              <div className="space-y-6">
-                {skillBars.map((skill) => (
-                  <div key={skill.label}>
-                    <div className="flex justify-between font-label-mono text-caption uppercase mb-2">
-                      <span>{skill.label}</span>
-                      <span>{skill.value}%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-secondary"
-                        style={{ width: `${skill.value}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
+          <style jsx>{`
+            @keyframes marquee {
+              from {
+                transform: translateX(0);
+              }
+              to {
+                transform: translateX(-50%);
+              }
+            }
+            .animate-marquee {
+              animation: marquee 22s linear infinite;
+            }
+          `}</style>
         </section>
 
         {/* Blog Section */}
