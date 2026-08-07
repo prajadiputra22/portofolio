@@ -29,7 +29,7 @@ const services = [
   },
   {
     icon: "integration_instructions",
-    title: "Fullstack Web Developer",
+    title: "Fullstack Developer",
     description:
       "Delivering end-to-end solutions by bridging the gap between design and data. Mastery of the entire development lifecycle from concept to deployment.",
     points: ["System Integration", "DevOps Workflows", "Scalable Solutions"],
