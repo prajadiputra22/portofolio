@@ -19,7 +19,7 @@ const navLinks = [
   { id: "services", label: "Services", icon: "rebase_edit" },
   { id: "works", label: "Works", icon: "grid_view" },
   { id: "skills", label: "Skills", icon: "psychology" },
-  { id: "blog", label: "Blog", icon: "article" },
+  // { id: "blog", label: "Blog", icon: "article" }, // Blog section disembunyikan sementara
   { id: "contact", label: "Contact", icon: "mail" },
 ];
 
@@ -424,7 +424,8 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
           `}</style>
         </section>
 
-        {/* Blog Section */}
+        {/* Blog Section - disembunyikan sementara */}
+        {false && (
         <section className="py-16 md:py-24 bg-surface-container-lowest" id="blog">
           <div className="px-margin-mobile md:px-margin-desktop">
             <div className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -474,6 +475,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
             </div>
           </div>
         </section>
+        )}
 
         {/* Contact Section */}
         <section className="py-16 md:py-24 bg-surface-container-low" id="contact">
