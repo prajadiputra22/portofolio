@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from 'next/link';
 import { useEffect, useState } from "react";
 
 export type WorkItem = {
@@ -121,7 +122,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
       {/* TopAppBar Shell */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
         <div className="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
-          <link href="/">
+          <Link href="/">
           <div className="flex items-center gap-1.5 md:gap-2 md:-ml-12">
             <span className="material-symbols-outlined text-secondary text-lg md:text-2xl" data-icon="terminal">
               terminal
@@ -130,7 +131,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
               DARMAWAN Suka Prajadiputra
             </span>
           </div>
-          </link>
+          </Link>
           {/* Desktop Menu */}
           <nav className="hidden md:flex md:-mr-14 items-center gap-8">
             {navLinks.map((link) => (
