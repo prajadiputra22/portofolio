@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+type Skill = {
+  id: string;
+  name: string;
+  icon_url: string | null;
+};
+
 type Work = {
   id: string;
   title: string;
@@ -9,12 +15,15 @@ type Work = {
   project_url: string | null;
   repo_url: string | null;
   created_at: string;
+  skills: Skill[];
 };
 
 async function getWorks(): Promise<Work[]> {
   const { data, error } = await supabaseAdmin
     .from("works")
-    .select("id, title, description, cover_image_url, project_url, repo_url, created_at")
+    .select(
+      "id, title, description, cover_image_url, project_url, repo_url, created_at, work_skills(skills(id, name, icon_url))"
+    )
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -22,7 +31,17 @@ async function getWorks(): Promise<Work[]> {
     return [];
   }
 
-  return data ?? [];
+  type RawSkillRelation = Skill | Skill[] | null;
+  type RawRow = Omit<Work, "skills"> & {
+    work_skills: { skills: RawSkillRelation }[] | null;
+  };
+
+  return ((data ?? []) as unknown as RawRow[]).map((row) => ({
+    ...row,
+    skills: (row.work_skills ?? [])
+      .map((ws) => (Array.isArray(ws.skills) ? ws.skills[0] : ws.skills))
+      .filter((skill): skill is Skill => Boolean(skill)),
+  }));
 }
 
 function formatDate(dateString: string) {
@@ -161,6 +180,9 @@ export default async function ManageWorks() {
                           Project
                         </th>
                         <th className="px-6 py-4 font-label-mono text-label-mono uppercase tracking-widest text-on-surface-variant">
+                          Skills
+                        </th>
+                        <th className="px-6 py-4 font-label-mono text-label-mono uppercase tracking-widest text-on-surface-variant">
                           Links
                         </th>
                         <th className="px-6 py-4 font-label-mono text-label-mono uppercase tracking-widest text-on-surface-variant">
@@ -197,6 +219,25 @@ export default async function ManageWorks() {
                                   {work.description}
                                 </div>
                               </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex flex-wrap gap-1.5 max-w-[220px]">
+                              {work.skills.length === 0 ? (
+                                <span className="text-on-surface-variant/50 text-caption">—</span>
+                              ) : (
+                                work.skills.map((skill) => (
+                                  <span
+                                    key={skill.id}
+                                    className="flex items-center gap-1 px-2 py-1 bg-surface-container-high text-on-surface-variant text-label-mono rounded text-xs border border-outline-variant/30"
+                                  >
+                                    {skill.icon_url && (
+                                      <img src={skill.icon_url} alt="" className="w-3 h-3" />
+                                    )}
+                                    {skill.name}
+                                  </span>
+                                ))
+                              )}
                             </div>
                           </td>
                           <td className="px-6 py-5">

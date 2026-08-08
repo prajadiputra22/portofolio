@@ -1,11 +1,39 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { linkSkillsToWork, parseSkillNames } from "@/lib/works/skills";
+import {
+  getSkillsForWork,
+  linkSkillsToWork,
+  parseSkillNames,
+  unlinkAllSkillsFromWork,
+} from "@/lib/works/skills";
 
 const DESCRIPTION_MAX_LENGTH = 100;
 const BUCKET_NAME = "works";
 
-export async function POST(request: Request) {
+type RouteParams = { params: Promise<{ id: string }> };
+
+// GET /api/works/[id] — ambil satu project (+ skills) untuk pre-fill form edit
+export async function GET(_request: Request, { params }: RouteParams) {
+  const { id } = await params;
+
+  const { data, error } = await supabaseAdmin
+    .from("works")
+    .select("id, title, description, cover_image_url, project_url, repo_url, created_at")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json({ error: "Project tidak ditemukan." }, { status: 404 });
+  }
+
+  const skills = await getSkillsForWork(id);
+
+  return NextResponse.json({ work: { ...data, skills } });
+}
+
+// PUT /api/works/[id] — update project yang sudah ada, termasuk skills-nya
+export async function PUT(request: Request, { params }: RouteParams) {
+  const { id } = await params;
   const formData = await request.formData();
 
   const title = formData.get("title");
@@ -30,7 +58,17 @@ export async function POST(request: Request) {
     );
   }
 
-  let coverImageUrl: string | null = null;
+  const { data: existingWork, error: fetchError } = await supabaseAdmin
+    .from("works")
+    .select("cover_image_url")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !existingWork) {
+    return NextResponse.json({ error: "Project tidak ditemukan." }, { status: 404 });
+  }
+
+  let coverImageUrl: string | null = existingWork.cover_image_url;
 
   if (file instanceof File && file.size > 0) {
     const fileExt = file.name.split(".").pop() ?? "jpg";
@@ -57,32 +95,36 @@ export async function POST(request: Request) {
     coverImageUrl = publicUrlData.publicUrl;
   }
 
-  const { data: work, error: insertError } = await supabaseAdmin
+  const { data: work, error: updateError } = await supabaseAdmin
     .from("works")
-    .insert({
+    .update({
       title: title.trim(),
       description: description.trim(),
       cover_image_url: coverImageUrl,
       project_url: typeof projectUrl === "string" && projectUrl ? projectUrl : null,
       repo_url: typeof repoUrl === "string" && repoUrl ? repoUrl : null,
     })
+    .eq("id", id)
     .select()
     .single();
 
-  if (insertError || !work) {
+  if (updateError || !work) {
     return NextResponse.json(
-      { error: "Gagal menyimpan project. Coba lagi." },
+      { error: "Gagal menyimpan perubahan. Coba lagi." },
       { status: 500 }
     );
   }
 
   try {
-    await linkSkillsToWork(work.id, skillNames);
+    // Strategi replace-all: hapus semua relasi skill lama, lalu hubungkan
+    // ulang dengan daftar skill yang baru dikirim dari form.
+    await unlinkAllSkillsFromWork(id);
+    await linkSkillsToWork(id, skillNames);
   } catch {
     return NextResponse.json({
       success: true,
       work,
-      warning: "Project tersimpan, tapi sebagian skill gagal disimpan.",
+      warning: "Perubahan tersimpan, tapi sebagian skill gagal disimpan.",
     });
   }
 

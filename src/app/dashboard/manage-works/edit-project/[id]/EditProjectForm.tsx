@@ -15,7 +15,17 @@ const sidebarLinks = [
   { href: "/dashboard/manage-blog", label: "Manage Blog", icon: "article" },
 ];
 
-export default function AddProject() {
+type Work = {
+  id: string;
+  title: string;
+  description: string;
+  cover_image_url: string | null;
+  project_url: string | null;
+  repo_url: string | null;
+  skills?: string[];
+};
+
+export default function EditProjectForm({ work }: { work: Work }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -24,11 +34,12 @@ export default function AddProject() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [projectLink, setProjectLink] = useState("");
-  const [githubLink, setGithubLink] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
+  // Form di-prefill dari data project yang sudah ada
+  const [title, setTitle] = useState(work.title);
+  const [description, setDescription] = useState(work.description);
+  const [projectLink, setProjectLink] = useState(work.project_url ?? "");
+  const [githubLink, setGithubLink] = useState(work.repo_url ?? "");
+  const [skills, setSkills] = useState<string[]>(work.skills ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -71,14 +82,14 @@ export default function AddProject() {
       formData.append("cover_image", selectedFile);
     }
 
-    const res = await fetch("/api/works", {
-      method: "POST",
+    const res = await fetch(`/api/works/${work.id}`, {
+      method: "PUT",
       body: formData,
     });
 
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      setErrorMessage(body.error ?? "Gagal menyimpan project. Coba lagi.");
+      setErrorMessage(body.error ?? "Gagal menyimpan perubahan. Coba lagi.");
       setIsSubmitting(false);
       return;
     }
@@ -143,9 +154,9 @@ export default function AddProject() {
         {/* Header (Desktop) */}
         <header className="hidden md:flex h-20 px-margin-desktop items-center justify-between border-b border-outline-variant/30 sticky top-0 bg-background/95 backdrop-blur z-30">
           <div>
-            <h1 className="font-headline-md text-headline-md text-on-surface">Add New Project</h1>
+            <h1 className="font-headline-md text-headline-md text-on-surface">Edit Project</h1>
             <p className="font-body-md text-body-md text-on-surface-variant mt-1">
-              Configure project details for the portfolio gallery.
+              Update project details for the portfolio gallery.
             </p>
           </div>
           <div className="flex gap-4">
@@ -161,26 +172,24 @@ export default function AddProject() {
               disabled={isSubmitting}
               className="px-6 py-2 rounded-xl font-bold bg-secondary text-on-secondary-container hover:shadow-[0_0_20px_rgba(123,208,255,0.3)] transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-secondary/50 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Saving..." : "Save Project"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </header>
 
         <div className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 w-full flex-1">
-          {/* Mobile title (shown since desktop header is hidden on mobile) */}
+          {/* Mobile title */}
           <div className="md:hidden mb-6">
-            <h1 className="font-headline-md text-headline-md text-on-surface">Add New Project</h1>
+            <h1 className="font-headline-md text-headline-md text-on-surface">Edit Project</h1>
             <p className="font-body-md text-body-md text-on-surface-variant mt-1">
-              Configure project details for the portfolio gallery.
+              Update project details for the portfolio gallery.
             </p>
           </div>
 
           <form id="project-form" className="space-y-8" onSubmit={handleSubmit}>
-            {/* Bento Grid Layout for Form */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column (Main Details) */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Project Identity Card */}
                 <div className="glass-panel rounded-xl p-6 relative overflow-hidden group">
                   <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
                     <span className="material-symbols-outlined text-on-surface-variant">edit_document</span>
@@ -233,7 +242,6 @@ export default function AddProject() {
 
               {/* Right Column (Media & Meta) */}
               <div className="lg:col-span-1 space-y-6">
-                {/* Image Upload Card */}
                 <div className="glass-panel rounded-xl p-6 h-full flex flex-col">
                   <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-on-surface-variant">image</span>
@@ -258,7 +266,7 @@ export default function AddProject() {
                     }}
                     onDrop={handleDrop}
                     className={
-                      "flex-1 min-h-[200px] border-2 border-dashed rounded-lg bg-surface-container-high/50 flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 group " +
+                      "flex-1 min-h-[200px] border-2 border-dashed rounded-lg bg-surface-container-high/50 flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 group overflow-hidden relative " +
                       (isDragging
                         ? "border-secondary bg-surface-variant/30"
                         : "border-outline-variant/50 hover:border-secondary/50 hover:bg-surface-variant/50")
@@ -283,6 +291,25 @@ export default function AddProject() {
                         >
                           Remove
                         </button>
+                      </>
+                    ) : work.cover_image_url ? (
+                      <>
+                        <img
+                          src={work.cover_image_url}
+                          alt={`${work.title} current cover`}
+                          className="absolute inset-0 w-full h-full object-cover opacity-40"
+                        />
+                        <div className="relative z-10 bg-surface-container-highest p-3 rounded-full mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                          <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary text-3xl">
+                            cloud_upload
+                          </span>
+                        </div>
+                        <p className="relative z-10 font-body-md text-body-md text-on-surface mb-1">
+                          Current cover image
+                        </p>
+                        <p className="relative z-10 font-caption text-caption text-on-surface-variant mb-4">
+                          Click or drag a new image to replace
+                        </p>
                       </>
                     ) : (
                       <>
@@ -318,7 +345,6 @@ export default function AddProject() {
 
             {/* Bottom Row (Links & Tech) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* URLs Card */}
               <div className="glass-panel rounded-xl p-6">
                 <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-on-surface-variant">link</span>
@@ -378,7 +404,7 @@ export default function AddProject() {
                   <span className="material-symbols-outlined text-on-surface-variant">psychology</span>
                   Skills / Tech Stack
                 </h2>
-                <SkillsInput onChange={setSkills} />
+                <SkillsInput initialSkills={skills} onChange={setSkills} />
               </div>
             </div>
 
