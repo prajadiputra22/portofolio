@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from 'next/link';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type WorkItem = {
   id: string;
@@ -92,6 +92,52 @@ const blogPosts = [
       "Strategies for maintaining scalable and readable server-side codebases in high-traffic applications.",
   },
 ];
+
+function Reveal({
+  children,
+  className = "",
+  direction = "up",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  direction?: "up" | "left";
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -60px 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const hiddenTransform = direction === "left" ? "translate-x-16" : "translate-y-12";
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        visible ? "opacity-100 translate-x-0 translate-y-0" : `opacity-0 ${hiddenTransform}`
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function HomeClient({ works }: { works: WorkItem[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -198,7 +244,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
       <main className="pt-18">
         {/* Hero Section */}
         <section
-          className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 py-16 md:py-0 overflow-hidden w-full"
+          className={`relative min-h-[85vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 py-16 md:py-0 overflow-hidden w-full`}
           id="home"
         >
           <div className="absolute inset-0 z-0 pointer-events-none">
@@ -207,7 +253,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
           </div>
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-center justify-between gap-12">
             {/* Mobile: Image Top, Desktop: Image Right */}
-            <div className="hidden md:order-2 md:w-1/2 md:flex md:justify-end">
+            <Reveal className="hidden md:order-2 md:w-1/2 md:flex md:justify-end">
               <div className="relative group">
                 <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
                 <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
@@ -221,53 +267,62 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                   />
                 </div>
               </div>
-            </div>
+            </Reveal>
             <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
-              <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
-                HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
-              </p>
-              <h1 className="text-balance font-display-lg-mobile text-[32px] leading-[38px] md:font-display-lg md:text-[40px] md:leading-[48px] lg:text-display-lg lg:leading-[1.1] pb-1 mb-6 md:mb-8 lg:mb-4">
-                Welcome To My{" "}
-                <span className="italic font-light-bold inline-block pb-1">Portfolio</span>
-              </h1>
-              <p className="font-body-lg text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-10 max-w-xl mx-auto md:mx-0">
-                A passionate Software Developer dedicated to building high-performance, scalable
-                digital experiences. I balance complex backend engineering with refined frontend
-                aesthetics to create architectural integrity in every pixel.
-              </p>
-              <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-0">
-                <a
-                  className="bg-secondary text-on-secondary px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
-                  href="#works"
-                >
-                  VIEW WORKS
-                </a>
-                <a
-                  className="border border-outline-variant px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono hover:bg-surface-variant/30 transition-all"
-                  href="#contact"
-                >
-                  HIRE ME
-                </a>
-              </div>
+              <Reveal>
+                <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
+                  HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
+                </p>
+              </Reveal>
+              <Reveal>
+                <h1 className="text-balance font-display-lg-mobile text-[32px] leading-[38px] md:font-display-lg md:text-[40px] md:leading-[48px] lg:text-display-lg lg:leading-[1.1] pb-1 mb-6 md:mb-8 lg:mb-4">
+                  Welcome To My{" "}
+                  <span className="italic font-light-bold inline-block pb-1">Portfolio</span>
+                </h1>
+              </Reveal>
+              <Reveal>
+                <p className="font-body-lg text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-10 max-w-xl mx-auto md:mx-0">
+                  A passionate Software Developer dedicated to building high-performance, scalable
+                  digital experiences. I balance complex backend engineering with refined frontend
+                  aesthetics to create architectural integrity in every pixel.
+                </p>
+              </Reveal>
+              <Reveal>
+                <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-0">
+                  <a
+                    className="bg-secondary text-on-secondary px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
+                    href="#works"
+                  >
+                    VIEW WORKS
+                  </a>
+                  <a
+                    className="border border-outline-variant px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono hover:bg-surface-variant/30 transition-all"
+                    href="#contact"
+                  >
+                    HIRE ME
+                  </a>
+                </div>
+              </Reveal>
             </div>
           </div>
         </section>
 
         {/* Services Section */}
         <section
-          className="py-16 md:py-24 px-margin-mobile md:px-margin-desktop overflow-hidden"
+          className={`py-16 md:py-24 px-margin-mobile md:px-margin-desktop overflow-hidden`}
           id="services"
         >
-          <div className="mb-10 md:mb-16">
+          <Reveal className="mb-10 md:mb-16">
             <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
               Core Expertise
             </h2>
             <div className="h-1 w-20 bg-secondary" />
-          </div>
+          </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {services.map((service) => (
-              <div
+              <Reveal
                 key={service.title}
+                direction="up"
                 className="glass-card rounded-3xl p-6 md:p-8 group hover:border-secondary/50 transition-colors flex flex-col items-center text-center"
               >
                 <span
@@ -285,27 +340,27 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                     <li key={point}>• {point}</li>
                   ))}
                 </ul>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* Works Section */}
-        <section className="py-16 md:py-24 bg-surface-container-lowest" id="works">
+        <section className={`py-16 md:py-24 bg-surface-container-lowest`} id="works">
           <div className="px-margin-mobile md:px-margin-desktop overflow-hidden">
-            <div className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <Reveal className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
                   Selected Works
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
-            </div>
+            </Reveal>
             <div className="relative">
               {works.length === 0 ? (
-                <div className="glass-card rounded-3xl p-10 text-center text-on-surface-variant">
+                <Reveal className="glass-card rounded-3xl p-10 text-center text-on-surface-variant">
                   Belum ada project yang ditambahkan.
-                </div>
+                </Reveal>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                   {works.map((work) => {
@@ -313,7 +368,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                     const caseStudyLink = work.projectUrl || work.repoUrl;
 
                     return (
-                      <div
+                      <Reveal
                         key={work.id}
                         className="group relative overflow-hidden bg-surface-container rounded-3xl border border-outline-variant/30 transition-all hover:-translate-y-2"
                       >
@@ -366,7 +421,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                             </span>
                           )}
                         </div>
-                      </div>
+                      </Reveal>
                     );
                   })}
                 </div>
@@ -375,39 +430,44 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
           </div>
         </section>
 
-        {/* Skills Section */}
+        {/* Skills Section - animasi per section, slide dari kanan ke kiri */}
         <section
-          className="py-6 md:py-10 overflow-hidden"
+          className={`py-6 md:py-10 overflow-hidden`}
           id="skills"
         >
-          <div
+          <Reveal
+            direction="left"
             className="relative w-full overflow-hidden group/marquee"
-            style={{
-              maskImage:
-                "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-              WebkitMaskImage:
-                "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-            }}
           >
-            <div className="flex w-max gap-3 md:gap-10 animate-marquee group-hover/marquee:[animation-play-state:paused]">
-              {[...skillTags, ...skillTags].map((skill, idx) => (
-                <div
-                  key={`${skill.name}-${idx}`}
-                  className="flex items-center gap-1.5 md:gap-3 shrink-0 px-3 py-1.5 md:px-6 md:py-3 bg-surface-variant/30 border border-outline-variant rounded-full hover:border-secondary transition-colors"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={skill.icon}
-                    alt={skill.name}
-                    className="w-4 h-4 md:w-6 md:h-6 object-contain shrink-0"
-                  />
-                  <span className="font-label-mono text-[10px] md:text-label-mono uppercase tracking-wider whitespace-nowrap">
-                    {skill.name}
-                  </span>
-                </div>
-              ))}
+            <div
+              className="relative w-full overflow-hidden"
+              style={{
+                maskImage:
+                  "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+              }}
+            >
+              <div className="flex w-max gap-3 md:gap-10 animate-marquee group-hover/marquee:[animation-play-state:paused]">
+                {[...skillTags, ...skillTags].map((skill, idx) => (
+                  <div
+                    key={`${skill.name}-${idx}`}
+                    className="flex items-center gap-1.5 md:gap-3 shrink-0 px-3 py-1.5 md:px-6 md:py-3 bg-surface-variant/30 border border-outline-variant rounded-full hover:border-secondary transition-colors"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={skill.icon}
+                      alt={skill.name}
+                      className="w-4 h-4 md:w-6 md:h-6 object-contain shrink-0"
+                    />
+                    <span className="font-label-mono text-[10px] md:text-label-mono uppercase tracking-wider whitespace-nowrap">
+                      {skill.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </Reveal>
           <style jsx>{`
             @keyframes marquee {
               from {
@@ -425,19 +485,19 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
 
         {/* Blog Section - disembunyikan sementara */}
         {false && (
-        <section className="py-16 md:py-24 bg-surface-container-lowest" id="blog">
+        <section className={`py-16 md:py-24 bg-surface-container-lowest`} id="blog">
           <div className="px-margin-mobile md:px-margin-desktop">
-            <div className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <Reveal className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
                   Latest Insights
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
-            </div>
+            </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {blogPosts.map((post) => (
-                <div
+                <Reveal
                   key={post.title}
                   className="group bg-surface-container rounded-3xl border border-outline-variant/30 overflow-hidden transition-all hover:border-secondary/30"
                 >
@@ -469,7 +529,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       </span>
                     </a>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -477,19 +537,23 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
         )}
 
         {/* Contact Section */}
-        <section className="py-16 md:py-24 bg-surface-container-low" id="contact">
+        <section className={`py-16 md:py-24 bg-surface-container-low`} id="contact">
           <div className="px-margin-mobile md:px-margin-desktop">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
               <div>
-                <h2 className="font-display-lg-mobile text-[28px] leading-[34px] md:text-display-lg-mobile mb-4 md:mb-6">
-                  Let&apos;s <span className="text-secondary">Talk.</span>
-                </h2>
-                <p className="text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-12 max-w-md">
-                  Have a complex problem that needs a clean solution? Drop me a message and
-                  let&apos;s build something exceptional.
-                </p>
+                <Reveal>
+                  <h2 className="font-display-lg-mobile text-[28px] leading-[34px] md:text-display-lg-mobile mb-4 md:mb-6">
+                    Let&apos;s <span className="text-secondary">Talk.</span>
+                  </h2>
+                </Reveal>
+                <Reveal>
+                  <p className="text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-12 max-w-md">
+                    Have a complex problem that needs a clean solution? Drop me a message and
+                    let&apos;s build something exceptional.
+                  </p>
+                </Reveal>
                 <div className="space-y-6 md:space-y-8">
-                  <div className="flex items-center gap-4 md:gap-6">
+                  <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
                       <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="location_on">
                         location_on
@@ -501,8 +565,8 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       </p>
                       <p className="font-body-md text-sm md:text-base">Sukabumi City, West Java, Indonesia</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 md:gap-6">
+                  </Reveal>
+                  <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
                       <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="call">
                         call
@@ -514,8 +578,8 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       </p>
                       <p className="font-body-md text-sm md:text-base">+62 857 1794 5499</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 md:gap-6">
+                  </Reveal>
+                  <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
                       <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="alternate_email">
                         alternate_email
@@ -527,10 +591,10 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       </p>
                       <p className="font-body-md text-sm md:text-base break-all">darmawanprajadiputra@gmail.com</p>
                     </div>
-                  </div>
+                  </Reveal>
                 </div>
               </div>
-              <div className="glass-card p-5 md:p-8 rounded-3xl">
+              <Reveal className="glass-card p-5 md:p-8 rounded-3xl">
                 <form
                   className="space-y-4 md:space-y-6"
                   onSubmit={(e) => {
@@ -574,7 +638,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                     SEND MESSAGE
                   </button>
                 </form>
-              </div>
+              </Reveal>
             </div>
           </div>
         </section>
