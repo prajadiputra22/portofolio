@@ -93,6 +93,8 @@ const blogPosts = [
   },
 ];
 
+// Komponen reveal generik: elemen slide masuk saat pertama kali terlihat di viewport.
+// direction "up" = slide dari bawah (default), "left" = slide dari kanan ke kiri.
 function Reveal({
   children,
   className = "",
@@ -118,7 +120,7 @@ function Reveal({
           }
         });
       },
-      { threshold: 0.3, rootMargin: "0px 0px -60px 0px" }
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
     );
 
     observer.observe(el);
@@ -142,6 +144,7 @@ function Reveal({
 export default function HomeClient({ works }: { works: WorkItem[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
@@ -597,8 +600,49 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
               <Reveal className="glass-card p-5 md:p-8 rounded-3xl">
                 <form
                   className="space-y-4 md:space-y-6"
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
+
+                    const form = e.currentTarget;
+                    const formData = new FormData(form);
+                    const name = (formData.get("name") as string)?.trim();
+                    const email = (formData.get("email") as string)?.trim();
+                    const message = (formData.get("message") as string)?.trim();
+
+                    if (!name || !email || !message) return;
+
+                    setFormStatus("loading");
+
+                    try {
+                      const res = await fetch("https://api.web3forms.com/submit", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Accept: "application/json",
+                        },
+                        body: JSON.stringify({
+                          access_key: "1bca3c5c-f381-4639-bd6b-a632623c1a1e",
+                          subject: `Pesan baru dari ${name} lewat Portfolio`,
+                          from_name: name,
+                          email,
+                          message,
+                          to: "darmawanprajadiputra@gmail.com",
+                        }),
+                      });
+
+                      const result = await res.json();
+
+                      if (result.success) {
+                        setFormStatus("success");
+                        form.reset();
+                      } else {
+                        setFormStatus("error");
+                      }
+                    } catch {
+                      setFormStatus("error");
+                    } finally {
+                      setTimeout(() => setFormStatus("idle"), 4000);
+                    }
                   }}
                 >
                   <div>
@@ -609,6 +653,8 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all"
                       placeholder="Your Name..."
                       type="text"
+                      name="name"
+                      required
                     />
                   </div>
                   <div>
@@ -619,6 +665,8 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all"
                       placeholder="name@example.com"
                       type="email"
+                      name="email"
+                      required
                     />
                   </div>
                   <div>
@@ -629,13 +677,29 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all resize-none"
                       placeholder="Tell me about your project..."
                       rows={4}
+                      name="message"
+                      required
                     />
                   </div>
                   <button
-                    className="w-full bg-secondary text-on-secondary py-3 md:py-4 rounded-lg font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all shadow-lg shadow-secondary/20"
+                    className="w-full bg-secondary text-on-secondary py-3 md:py-4 rounded-lg font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all shadow-lg shadow-secondary/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     type="submit"
+                    disabled={formStatus === "loading"}
                   >
-                    SEND MESSAGE
+                    {formStatus === "loading" ? (
+                      <>
+                        <span className="material-symbols-outlined animate-spin text-lg" data-icon="progress_activity">
+                          progress_activity
+                        </span>
+                        SENDING...
+                      </>
+                    ) : formStatus === "success" ? (
+                      "MESSAGE SENT ✓"
+                    ) : formStatus === "error" ? (
+                      "FAILED, TRY AGAIN"
+                    ) : (
+                      "SEND MESSAGE"
+                    )}
                   </button>
                 </form>
               </Reveal>
