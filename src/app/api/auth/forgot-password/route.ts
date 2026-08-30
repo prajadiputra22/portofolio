@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password?token=${token}`;
 
     await resend.emails.send({
-      from: "ARCHITECT.DEV <onboarding@resend.dev>",
+      from: "ARCHITECT.DEV <noreply@darmawansp.my.id>",
       to: email,
       subject: "Reset Password - ARCHITECT.DEV",
       html: `
