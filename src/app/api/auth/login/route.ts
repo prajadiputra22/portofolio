@@ -7,9 +7,6 @@ import {
   SESSION_MAX_AGE,
 } from "@/lib/auth/session";
 
-// Ini route Node.js runtime biasa (bukan Edge), karena bcryptjs butuh itu.
-// Jangan tambahkan `export const runtime = "edge"` di file ini.
-
 export async function POST(request: Request) {
   const { username, password } = await request.json();
 
@@ -26,8 +23,6 @@ export async function POST(request: Request) {
     .eq("username", username)
     .maybeSingle();
 
-  // Pesan error digeneralisir dengan sengaja: jangan bocorkan apakah
-  // username-nya ada atau tidak, supaya nggak bisa dipakai untuk enumerasi akun.
   const invalidCredentials = () =>
     NextResponse.json(
       { error: "Username atau password salah." },

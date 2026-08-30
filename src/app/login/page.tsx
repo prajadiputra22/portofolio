@@ -111,8 +111,8 @@ export default function Login() {
                 </label>
 
                 <a
-                  className="font-caption text-caption text-secondary hover:text-on-secondary-container transition-colors"
-                  href="#"
+                   className="font-caption text-caption text-secondary hover:text-on-secondary-container transition-colors"
+                   href="/forgot-password"
                 >
                   Forgot Access?
                 </a>
