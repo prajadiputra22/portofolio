@@ -13,7 +13,7 @@ const BUCKET_NAME = "works";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-// GET /api/works/[id] — ambil satu project (+ skills) untuk pre-fill form edit
+// GET
 export async function GET(_request: Request, { params }: RouteParams) {
   const { id } = await params;
 
@@ -32,7 +32,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
   return NextResponse.json({ work: { ...data, skills } });
 }
 
-// PUT /api/works/[id] — update project yang sudah ada, termasuk skills-nya
+// PUT
 export async function PUT(request: Request, { params }: RouteParams) {
   const { id } = await params;
   const formData = await request.formData();
@@ -117,13 +117,10 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 
   try {
-    // Strategi replace-all: hapus semua relasi skill lama, lalu hubungkan
-    // ulang dengan daftar skill yang baru dikirim dari form.
+    
     await unlinkAllSkillsFromWork(id);
     await linkSkillsToWork(id, skillNames);
   } catch {
-    // Tetap revalidate walau sebagian skill gagal disimpan, karena
-    // title/description/link tetap berhasil ter-update di database.
     revalidatePath("/");
     revalidatePath("/dashboard/manage-works");
 
@@ -133,9 +130,6 @@ export async function PUT(request: Request, { params }: RouteParams) {
       warning: "Perubahan tersimpan, tapi sebagian skill gagal disimpan.",
     });
   }
-
-  // Bersihkan cache halaman yang menampilkan data works ini, supaya
-  // link/gambar/title yang baru langsung tampil tanpa perlu redeploy.
   revalidatePath("/");
   revalidatePath("/dashboard/manage-works");
 
