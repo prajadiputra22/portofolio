@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import {
   getSkillsForWork,
@@ -121,12 +122,22 @@ export async function PUT(request: Request, { params }: RouteParams) {
     await unlinkAllSkillsFromWork(id);
     await linkSkillsToWork(id, skillNames);
   } catch {
+    // Tetap revalidate walau sebagian skill gagal disimpan, karena
+    // title/description/link tetap berhasil ter-update di database.
+    revalidatePath("/");
+    revalidatePath("/dashboard/manage-works");
+
     return NextResponse.json({
       success: true,
       work,
       warning: "Perubahan tersimpan, tapi sebagian skill gagal disimpan.",
     });
   }
+
+  // Bersihkan cache halaman yang menampilkan data works ini, supaya
+  // link/gambar/title yang baru langsung tampil tanpa perlu redeploy.
+  revalidatePath("/");
+  revalidatePath("/dashboard/manage-works");
 
   return NextResponse.json({ success: true, work });
 }
