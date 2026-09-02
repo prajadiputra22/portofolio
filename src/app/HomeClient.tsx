@@ -18,7 +18,7 @@ const navLinks = [
   { id: "home", label: "Home", icon: "home" },
   { id: "services", label: "Services", icon: "rebase_edit" },
   { id: "works", label: "Works", icon: "grid_view" },
-  // { id: "blog", label: "Blog", icon: "article" }, // Blog section disembunyikan sementara
+  // { id: "blog", label: "Blog", icon: "article" },
   { id: "contact", label: "Contact", icon: "mail" },
 ];
 
