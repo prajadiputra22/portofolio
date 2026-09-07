@@ -38,5 +38,27 @@ async function getWorks(): Promise<WorkItem[]> {
 
 export default async function Page() {
   const works = await getWorks();
-  return <HomeClient works={works} />;
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("*")
+    .maybeSingle();
+
+  const safeProfile = profile ?? {
+    id: 0,
+    full_name: "",
+    hero_greeting: "",
+    hero_headline: "Welcome To My Portfolio",
+    bio: "",
+    role_title: null,
+    avatar_url: null,
+    resume_url: null,
+    location: null,
+    phone: null,
+    email: "",
+    linkedin_url: null,
+    github_url: null,
+    instagram_url: null,
+    updated_at: new Date().toISOString(),
+  };
+  return <HomeClient works={works} profile={safeProfile} />;
 }

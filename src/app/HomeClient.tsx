@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useEffect, useRef, useState } from "react";
+import type { Profile } from "@/types/profile";
 
 export type WorkItem = {
   id: string;
@@ -141,10 +142,26 @@ function Reveal({
   );
 }
 
-export default function HomeClient({ works }: { works: WorkItem[] }) {
+// Pecah headline jadi 2 bagian supaya kata terakhir tetap bisa ditampilkan
+// miring (italic), persis seperti gaya "Welcome To My <i>Portfolio</i>"
+// sebelumnya — tapi sekarang dari data dinamis, bukan teks tetap.
+function splitHeadline(headline: string) {
+  const words = headline.trim().split(" ");
+  if (words.length <= 1) {
+    return { lead: "", emphasis: headline };
+  }
+  const emphasis = words.pop() as string;
+  return { lead: words.join(" ") + " ", emphasis };
+}
+
+export default function HomeClient({ works, profile }: { works: WorkItem[]; profile: Profile }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const { lead: headlineLead, emphasis: headlineEmphasis } = splitHeadline(
+    profile.hero_headline || "Welcome To My Portfolio"
+  );
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
@@ -176,7 +193,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
               terminal
             </span>
             <span className="font-label-mono text-[10px] md:text-label-mono tracking-widest text-secondary uppercase leading-tight">
-              DARMAWAN Suka Prajadiputra
+              {profile.full_name}
             </span>
           </div>
           </Link>
@@ -261,12 +278,13 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                 <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
                 <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
                   <Image
-                    src="/pictures/me.png"
-                    alt="Darmawan Profile"
+                    src={profile.avatar_url || "/pictures/me.png"}
+                    alt={`${profile.full_name} Profile`}
                     fill
                     sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 256px, 192px"
                     className="object-cover"
                     priority
+                    unoptimized={Boolean(profile.avatar_url)}
                   />
                 </div>
               </div>
@@ -274,20 +292,18 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
             <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
               <Reveal>
                 <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
-                  HI, I&apos;M <span className="text-secondary">DARMAWAN</span>
+                  HI, I&apos;M <span className="text-secondary">{profile.hero_greeting}</span>
                 </p>
               </Reveal>
               <Reveal>
                 <h1 className="text-balance font-display-lg-mobile text-[32px] leading-[38px] md:font-display-lg md:text-[40px] md:leading-[48px] lg:text-display-lg lg:leading-[1.1] pb-1 mb-6 md:mb-8 lg:mb-4">
-                  Welcome To My{" "}
-                  <span className="italic font-light-bold inline-block pb-1">Portfolio</span>
+                  {headlineLead}
+                  <span className="italic font-light-bold inline-block pb-1">{headlineEmphasis}</span>
                 </h1>
               </Reveal>
               <Reveal>
                 <p className="font-body-lg text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-10 max-w-xl mx-auto md:mx-0">
-                  A passionate Software Developer dedicated to building high-performance, scalable
-                  digital experiences. I balance complex backend engineering with refined frontend
-                  aesthetics to create architectural integrity in every pixel.
+                  {profile.bio}
                 </p>
               </Reveal>
               <Reveal>
@@ -367,7 +383,6 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                   {works.map((work) => {
-                    // Live project URL diutamakan; kalau tidak ada, fallback ke repository.
                     const caseStudyLink = work.projectUrl || work.repoUrl;
 
                     return (
@@ -566,7 +581,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
                         Location
                       </p>
-                      <p className="font-body-md text-sm md:text-base">Sukabumi City, West Java, Indonesia</p>
+                      <p className="font-body-md text-sm md:text-base">{profile.location}</p>
                     </div>
                   </Reveal>
                   <Reveal className="flex items-center gap-4 md:gap-6">
@@ -579,7 +594,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
                         Phone Number
                       </p>
-                      <p className="font-body-md text-sm md:text-base">+62 857 1794 5499</p>
+                      <p className="font-body-md text-sm md:text-base">{profile.phone}</p>
                     </div>
                   </Reveal>
                   <Reveal className="flex items-center gap-4 md:gap-6">
@@ -592,7 +607,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
                         Email Address
                       </p>
-                      <p className="font-body-md text-sm md:text-base break-all">darmawanprajadiputra@gmail.com</p>
+                      <p className="font-body-md text-sm md:text-base break-all">{profile.email}</p>
                     </div>
                   </Reveal>
                 </div>
@@ -626,7 +641,7 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
                           from_name: name,
                           email,
                           message,
-                          to: "darmawanprajadiputra@gmail.com",
+                          to: profile.email,
                         }),
                       });
 
@@ -712,30 +727,42 @@ export default function HomeClient({ works }: { works: WorkItem[] }) {
       <footer className="w-full py-8 md:py-10 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20">
         <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-3 md:gap-4">
           <span className="font-label-mono text-[11px] md:text-label-mono text-secondary uppercase text-center">
-            DARMAWAN SUKA PRAJADIPUTRA
+            {profile.full_name}
           </span>
           <p className="font-caption text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-all text-center">
-            © 2024 DarmawanSP.
+            © {new Date().getFullYear()} {profile.full_name}.
           </p>
           <div className="flex gap-4 md:gap-6">
-            <a
-              className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="https://www.linkedin.com/in/darmawan-suka-prajadiputra-466029290/"
-            >
-              LinkedIn
-            </a>
-            <a
-              className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="https://github.com/prajadiputra22"
-            >
-              GitHub
-            </a>
-            <a
-              className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-              href="https://www.instagram.com/_prajadiputra?igsh=MWRxM3dzM2J3ZGU0"
-            >
-              Instagram
-            </a>
+            {profile.linkedin_url && (
+              <a
+                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
+                href={profile.linkedin_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                LinkedIn
+              </a>
+            )}
+            {profile.github_url && (
+              <a
+                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
+                href={profile.github_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+            )}
+            {profile.instagram_url && (
+              <a
+                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
+                href={profile.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Instagram
+              </a>
+            )}
           </div>
         </div>
       </footer>
