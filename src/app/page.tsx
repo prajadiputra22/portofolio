@@ -39,7 +39,7 @@ async function getWorks(): Promise<WorkItem[]> {
 export default async function Page() {
   const works = await getWorks();
   const { data: profile } = await supabaseAdmin
-    .from("profiles")
+    .from("profile")
     .select("*")
     .maybeSingle();
 
