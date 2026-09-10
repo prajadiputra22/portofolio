@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import DashboardShell from "@/components/Dashboardshell";
 
 export type Profile = {
   id: number;
@@ -22,75 +21,10 @@ export type Profile = {
   updated_at: string;
 };
 
-const sidebarNav = [
-  { icon: "dashboard", label: "Dashboard", href: "/dashboard" },
-  { icon: "person", label: "Manage Profile", href: "/dashboard/manage-profile" },
-  { icon: "work", label: "Manage Works", href: "/dashboard/manage-works" },
-  { icon: "psychology", label: "Manage Skills", href: "/dashboard/manage-skills" },
-  { icon: "rss_feed", label: "Manage Blog", href: "/dashboard/manage-blog" },
-];
-
 const BIO_MAX = 500;
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 type UploadStatus = "idle" | "uploading" | "error";
-
-function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
-  const pathname = usePathname();
-
-  return (
-    <>
-      <div className="flex items-center gap-4 px-6 py-8 text-white">
-        <div className="size-6 text-primary">
-          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-          Admin Console
-        </h2>
-      </div>
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-        {sidebarNav.map((item) => {
-          const isActive =
-            item.href === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(item.href);
-
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={onNavigate}
-              className={
-                isActive
-                  ? "flex items-center gap-3 px-3 py-2 rounded bg-primary/10 text-primary font-bold"
-                  : "flex items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-[#2b3140] hover:text-white transition-colors"
-              }
-            >
-              <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-      {mobile ? null : (
-        <div className="p-4 border-t border-[#2b3140]">
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-3 py-2 rounded text-on-surface-variant hover:bg-[#2b3140] hover:text-white transition-colors text-xs font-mono uppercase tracking-wider"
-          >
-            <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-            View Live Site
-          </a>
-        </div>
-      )}
-    </>
-  );
-}
 
 export default function ManageProfileClient({
   initialProfile,
@@ -117,7 +51,6 @@ export default function ManageProfileClient({
 
   const [profile, setProfile] = useState<Profile>(initialProfile ?? emptyProfile);
   const [savedProfile, setSavedProfile] = useState<Profile>(initialProfile ?? emptyProfile);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
@@ -200,75 +133,16 @@ export default function ManageProfileClient({
   const bioLength = profile.bio?.length ?? 0;
 
   return (
-    <div
-      className="relative flex h-screen w-full bg-[#15181e] dark overflow-hidden"
-      style={{ fontFamily: '"Be Vietnam Pro", "Noto Sans", sans-serif' }}
-    >
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex h-full w-64 flex-col border-r border-[#2b3140] bg-[#101415] shrink-0">
-        <Sidebar />
-      </aside>
-
-      {/* Mobile Drawer + Overlay */}
-      <div
-        className={`fixed inset-0 z-[70] lg:hidden transition-opacity duration-300 ${
-          isDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={() => setIsDrawerOpen(false)}
-        />
-        <aside
-          className={`absolute left-0 top-0 h-full w-72 max-w-[80vw] flex flex-col bg-[#101415] border-r border-[#2b3140] shadow-2xl transition-transform duration-300 ease-in-out ${
-            isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <button
-            className="absolute top-6 right-4 text-on-surface-variant hover:text-white"
-            onClick={() => setIsDrawerOpen(false)}
-            type="button"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-          <Sidebar mobile onNavigate={() => setIsDrawerOpen(false)} />
-        </aside>
+    <DashboardShell title="Manage Profile">
+      <div>
+        <h1 className="text-on-surface text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
+          Manage Profile
+        </h1>
+        <p className="text-on-surface-variant text-sm md:text-base mt-2 max-w-2xl">
+          Refine your professional identity. These details are pulled directly into your
+          public portfolio — the hero section, contact card, and footer.
+        </p>
       </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Topbar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 md:px-8 h-16 border-b border-[#2b3140] bg-[#101415]/90 backdrop-blur-md shrink-0">
-          <div className="flex items-center gap-3">
-            <button
-              className="lg:hidden flex items-center justify-center rounded h-9 w-9 bg-[#2b3140] text-white hover:bg-[#32384a] transition-colors"
-              onClick={() => setIsDrawerOpen(true)}
-              type="button"
-            >
-              <span className="material-symbols-outlined text-[20px]">menu</span>
-            </button>
-            <span className="font-bold text-white text-sm md:text-base">Manage Profile</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              className="flex items-center justify-center rounded h-9 w-9 bg-[#2b3140] text-white hover:bg-[#32384a] transition-colors"
-              type="button"
-            >
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
-            </button>
-          </div>
-        </header>
-
-        <main className="flex flex-col gap-8 p-4 md:p-8 max-w-[1400px] mx-auto w-full">
-          <div>
-            <h1 className="text-on-surface text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
-              Manage Profile
-            </h1>
-            <p className="text-on-surface-variant text-sm md:text-base mt-2 max-w-2xl">
-              Refine your professional identity. These details are pulled directly into your
-              public portfolio — the hero section, contact card, and footer.
-            </p>
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left column: photo + status */}
@@ -577,10 +451,6 @@ export default function ManageProfileClient({
               </div>
             </div>
           </div>
-
-          <div className="h-10" />
-        </main>
-      </div>
-    </div>
+    </DashboardShell>
   );
 }

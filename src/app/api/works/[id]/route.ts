@@ -122,7 +122,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     await linkSkillsToWork(id, skillNames);
   } catch {
     revalidatePath("/");
-    revalidatePath("/dashboard/manage-works");
+    revalidatePath("/dashboard/works");
 
     return NextResponse.json({
       success: true,
@@ -131,7 +131,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     });
   }
   revalidatePath("/");
-  revalidatePath("/dashboard/manage-works");
+  revalidatePath("/dashboard/works");
 
   return NextResponse.json({ success: true, work });
 }

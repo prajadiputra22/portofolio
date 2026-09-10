@@ -23,11 +23,8 @@ export default function SkillsInput({ initialSkills = [], onChange }: SkillsInpu
 
   useEffect(() => {
     onChange(selected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
-  // Cari data lengkap (termasuk icon) dari nama skill yang sedang dipilih.
-  // Kalau skill-nya baru diketik manual (belum ada di master), icon-nya null.
   function findSkillData(name: string): Skill | undefined {
     return availableSkills.find((s) => s.name.toLowerCase() === name.toLowerCase());
   }

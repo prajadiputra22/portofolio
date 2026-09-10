@@ -142,9 +142,6 @@ function Reveal({
   );
 }
 
-// Pecah headline jadi 2 bagian supaya kata terakhir tetap bisa ditampilkan
-// miring (italic), persis seperti gaya "Welcome To My <i>Portfolio</i>"
-// sebelumnya — tapi sekarang dari data dinamis, bukan teks tetap.
 function splitHeadline(headline: string) {
   const words = headline.trim().split(" ");
   if (words.length <= 1) {
