@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Inline CSS ke HTML: menghilangkan request CSS yang render-blocking
+    inlineCss: true,
+  },
   images: {
   formats: ["image/avif", "image/webp"],
   minimumCacheTTL: 60 * 60 * 24 * 365,
