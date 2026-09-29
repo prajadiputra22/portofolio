@@ -12,6 +12,8 @@ type RawWorkRow = {
   work_skills: { skills: RawSkill | RawSkill[] | null }[] | null;
 };
 
+export const revalidate = 60;
+
 async function getWorks(): Promise<WorkItem[]> {
   const { data, error } = await supabaseAdmin
     .from("works")
@@ -37,11 +39,11 @@ async function getWorks(): Promise<WorkItem[]> {
 }
 
 export default async function Page() {
-  const works = await getWorks();
-  const { data: profile } = await supabaseAdmin
-    .from("profile")
-    .select("*")
-    .maybeSingle();
+  // Dijalankan paralel (sebelumnya berurutan / waterfall).
+  const [works, { data: profile }] = await Promise.all([
+    getWorks(),
+    supabaseAdmin.from("profile").select("*").maybeSingle(),
+  ]);
 
   const safeProfile = profile ?? {
     id: 0,

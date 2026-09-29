@@ -100,17 +100,19 @@ function Reveal({
   children,
   className = "",
   direction = "up",
+  instant = false,
 }: {
   children: React.ReactNode;
   className?: string;
   direction?: "up" | "left";
+  instant?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || instant) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -126,7 +128,17 @@ function Reveal({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [instant]);
+
+  // Konten above-the-fold (LCP) TIDAK boleh disembunyikan (opacity-0) menunggu JS.
+  // Pakai animasi CSS murni (hanya transform) supaya langsung ter-paint.
+  if (instant) {
+    return (
+      <div ref={ref} className={`animate-hero-in motion-reduce:animate-none ${className}`}>
+        {children}
+      </div>
+    );
+  }
 
   const hiddenTransform = direction === "left" ? "translate-x-16" : "translate-y-12";
 
@@ -270,7 +282,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
           </div>
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-center justify-between gap-12">
             {/* Mobile: Image Top, Desktop: Image Right */}
-            <Reveal className="hidden md:order-2 md:w-1/2 md:flex md:justify-end">
+            <Reveal instant className="hidden md:order-2 md:w-1/2 md:flex md:justify-end">
               <div className="relative group">
                 <div className="absolute -inset-4 bg-secondary/20 rounded-[50%] blur-sm group-hover:bg-secondary/70 shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500 flex-shrink-10" />
                 <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-[50%] overflow-hidden shadow-[0_0_16px_0px] sm:shadow-[0_0_24px_0px] md:shadow-[0_0_32px_0px] lg:shadow-[0_0_40px_0px] shadow-secondary/80 transition-all duration-500">
@@ -287,23 +299,23 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
               </div>
             </Reveal>
             <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
-              <Reveal>
+              <Reveal instant>
                 <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
                   HI, I&apos;M <span className="text-secondary">{profile.hero_greeting}</span>
                 </p>
               </Reveal>
-              <Reveal>
+              <Reveal instant>
                 <h1 className="text-balance font-display-lg-mobile text-[32px] leading-[38px] md:font-display-lg md:text-[40px] md:leading-[48px] lg:text-display-lg lg:leading-[1.1] pb-1 mb-6 md:mb-8 lg:mb-4">
                   {headlineLead}
                   <span className="italic font-light-bold inline-block pb-1">{headlineEmphasis}</span>
                 </h1>
               </Reveal>
-              <Reveal>
+              <Reveal instant>
                 <p className="font-body-lg text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-10 max-w-xl mx-auto md:mx-0">
                   {profile.bio}
                 </p>
               </Reveal>
-              <Reveal>
+              <Reveal instant>
                 <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-0">
                   <a
                     className="bg-secondary text-on-secondary px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
@@ -389,10 +401,12 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                       >
                         <div className="aspect-video relative overflow-hidden bg-surface-variant/30 flex items-center justify-center">
                           {work.image ? (
-                            <img
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            <Image
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
                               alt={work.title}
                               src={work.image}
+                              fill
+                              sizes="(min-width: 768px) 33vw, 100vw"
                             />
                           ) : (
                             <span className="material-symbols-outlined text-outline-variant text-4xl">
@@ -473,6 +487,10 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                     <img
                       src={skill.icon}
                       alt={skill.name}
+                      width={24}
+                      height={24}
+                      loading="lazy"
+                      decoding="async"
                       className="w-4 h-4 md:w-6 md:h-6 object-contain shrink-0"
                     />
                     <span className="font-label-mono text-[10px] md:text-label-mono uppercase tracking-wider whitespace-nowrap">
