@@ -133,7 +133,7 @@ function Reveal({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all duration-700 ease-out motion-reduce:transition-none motion-reduce:transform-none ${
         visible ? "opacity-100 translate-x-0 translate-y-0" : `opacity-0 ${hiddenTransform}`
       } ${className}`}
     >
@@ -281,7 +281,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                     sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 256px, 192px"
                     className="object-cover"
                     priority
-                    unoptimized={Boolean(profile.avatar_url)}
+                    fetchPriority="high"
                   />
                 </div>
               </div>
