@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AppIcon } from "@/components/AppIcon";
 
 type SubmitStatus = "idle" | "validating" | "success" | "error";
 
@@ -85,9 +86,10 @@ export default function Login() {
                 Username
               </label>
               <div className="relative group">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">
-                  person
-                </span>
+                <AppIcon
+                  name="person"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+                />
                 <input
                   className="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all placeholder:text-on-surface-variant/40"
                   id="username"
@@ -118,9 +120,10 @@ export default function Login() {
                 </a>
               </div>
               <div className="relative group">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">
-                  lock
-                </span>
+                <AppIcon
+                  name="lock"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+                />
                 <input
                   className="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all placeholder:text-on-surface-variant/40"
                   id="password"
@@ -134,9 +137,7 @@ export default function Login() {
                   onClick={togglePassword}
                   type="button"
                 >
-                  <span className="material-symbols-outlined text-[20px]">
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
+                  <AppIcon name={showPassword ? "visibility_off" : "visibility"} className="size-5" />
                 </button>
               </div>
             </div>
@@ -156,25 +157,25 @@ export default function Login() {
             >
               {submitStatus === "idle" && (
                 <>
-                  <span className="material-symbols-outlined text-[20px]">terminal</span>
+                  <AppIcon name="terminal" className="size-5" />
                   Access Dashboard
                 </>
               )}
               {submitStatus === "validating" && (
                 <>
-                  <span className="material-symbols-outlined text-[20px] animate-spin">sync</span>
+                  <AppIcon name="sync" className="size-5 animate-spin" />
                   Validating...
                 </>
               )}
               {submitStatus === "success" && (
                 <>
-                  <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                  <AppIcon name="check_circle" className="size-5" />
                   Initializing Session
                 </>
               )}
               {submitStatus === "error" && (
                 <>
-                  <span className="material-symbols-outlined text-[20px]">terminal</span>
+                  <AppIcon name="terminal" className="size-5" />
                   Access Dashboard
                 </>
               )}

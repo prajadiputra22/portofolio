@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AppIcon } from "@/components/AppIcon";
 
 type Skill = { id: string; name: string; icon_url: string | null };
 
@@ -78,7 +79,7 @@ export default function SkillsInput({ initialSkills = [], onChange }: SkillsInpu
                 className="hover:text-error transition-colors"
                 aria-label={`Remove ${name}`}
               >
-                <span className="material-symbols-outlined text-[16px]">close</span>
+                <AppIcon name="close" className="size-4" />
               </button>
             </span>
           );

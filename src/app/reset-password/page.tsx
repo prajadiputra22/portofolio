@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AppIcon } from "@/components/AppIcon";
 
 type SubmitStatus = "idle" | "validating" | "success" | "error";
 
@@ -68,7 +69,7 @@ function ResetPasswordForm() {
 
       {submitStatus === "success" ? (
         <div className="text-center space-y-4">
-          <span className="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
+          <AppIcon name="check_circle" className="mx-auto text-secondary size-12" />
           <p className="text-on-surface">Password berhasil diubah. Mengarahkan ke login...</p>
         </div>
       ) : (
@@ -81,9 +82,10 @@ function ResetPasswordForm() {
               New Password
             </label>
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">
-                lock
-              </span>
+              <AppIcon
+                name="lock"
+                className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+              />
               <input
                 className="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all placeholder:text-on-surface-variant/40"
                 id="newPassword"
@@ -104,9 +106,10 @@ function ResetPasswordForm() {
               Confirm Password
             </label>
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">
-                lock
-              </span>
+              <AppIcon
+                name="lock"
+                className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+              />
               <input
                 className="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all placeholder:text-on-surface-variant/40"
                 id="confirmPassword"
@@ -130,12 +133,12 @@ function ResetPasswordForm() {
           >
             {submitStatus === "validating" ? (
               <>
-                <span className="material-symbols-outlined text-[20px] animate-spin">sync</span>
+                <AppIcon name="sync" className="size-5 animate-spin" />
                 Memproses...
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                <AppIcon name="check_circle" className="size-5" />
                 Confirm
               </>
             )}

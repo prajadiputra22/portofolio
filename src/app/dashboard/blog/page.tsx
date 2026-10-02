@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import DashboardShell from "@/components/Dashboardshell"; 
+import DashboardShell from "@/components/Dashboardshell";
+import { AppIcon } from "@/components/AppIcon";
 
 type PostStatus = "published" | "draft";
 
@@ -169,12 +170,7 @@ export default function ManageBlogPage() {
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span
-              className="material-symbols-outlined text-secondary text-lg"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              terminal
-            </span>
+            <AppIcon name="terminal" className="text-secondary text-lg" />
             <span className="font-label-mono text-label-mono text-secondary tracking-widest uppercase">
               Admin Console
             </span>
@@ -190,7 +186,7 @@ export default function ManageBlogPage() {
           type="button"
           className="flex items-center gap-2 bg-secondary text-on-secondary px-8 py-4 rounded-lg font-bold hover:shadow-[0_0_20px_rgba(123,208,255,0.3)] transition-all duration-300 active:scale-95"
         >
-          <span className="material-symbols-outlined">add</span>
+          <AppIcon name="add" />
           New Post
         </button>
       </header>
@@ -206,9 +202,7 @@ export default function ManageBlogPage() {
       {/* Filter bar */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
-            search
-          </span>
+          <AppIcon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
           <input
             type="text"
             value={query}
@@ -244,7 +238,7 @@ export default function ManageBlogPage() {
             onClick={() => setSortDir((d) => (d === "desc" ? "asc" : "desc"))}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-outline-variant/30 px-4 py-3 rounded-lg hover:bg-surface-variant/30 transition-colors"
           >
-            <span className="material-symbols-outlined text-body-md">sort</span>
+            <AppIcon name="sort" className="text-body-md" />
             <span className="font-body-md text-body-md">{sortDir === "desc" ? "Newest" : "Oldest"}</span>
           </button>
         </div>
@@ -325,14 +319,14 @@ export default function ManageBlogPage() {
                         title="View"
                         className="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/30 rounded transition-all"
                       >
-                        <span className="material-symbols-outlined text-body-md">visibility</span>
+                        <AppIcon name="visibility" className="text-body-md" />
                       </button>
                       <button
                         type="button"
                         title="Edit"
                         className="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded transition-all"
                       >
-                        <span className="material-symbols-outlined text-body-md">edit</span>
+                        <AppIcon name="edit" className="text-body-md" />
                       </button>
                       <button
                         type="button"
@@ -344,9 +338,10 @@ export default function ManageBlogPage() {
                             : "p-2 text-on-surface-variant hover:text-secondary-container hover:bg-secondary-container/10 rounded transition-all"
                         }
                       >
-                        <span className="material-symbols-outlined text-body-md">
-                          {post.status === "published" ? "unpublished" : "publish"}
-                        </span>
+                        <AppIcon
+                          name={post.status === "published" ? "unpublish" : "publish"}
+                          className="text-body-md"
+                        />
                       </button>
                     </div>
                   </td>
@@ -373,7 +368,7 @@ export default function ManageBlogPage() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               className="p-2 rounded border border-outline-variant/30 hover:bg-surface-variant/30 disabled:opacity-30"
             >
-              <span className="material-symbols-outlined text-body-md">chevron_left</span>
+              <AppIcon name="chevron_left" className="text-body-md" />
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
               <button
@@ -395,7 +390,7 @@ export default function ManageBlogPage() {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               className="p-2 rounded border border-outline-variant/30 hover:bg-surface-variant/30 disabled:opacity-30"
             >
-              <span className="material-symbols-outlined text-body-md">chevron_right</span>
+              <AppIcon name="chevron_right" className="text-body-md" />
             </button>
           </div>
         </div>

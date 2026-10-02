@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import DashboardShell from "@/components/Dashboardshell";
+import { AppIcon } from "@/components/AppIcon";
 
 type Skill = {
   id: string;
@@ -72,14 +73,14 @@ export default async function ManageWorks() {
           href="/dashboard/works/add"
           className="flex items-center gap-2 bg-secondary text-on-secondary-container px-6 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.3)] active:scale-95"
         >
-          <span className="material-symbols-outlined">add</span>
+          <AppIcon name="add" />
           <span>Add New Project</span>
         </Link>
       </div>
 
       {/* Search Bar */}
       <div className="glass-panel p-2 rounded-lg flex items-center gap-2">
-        <span className="material-symbols-outlined text-on-surface-variant ml-3">search</span>
+        <AppIcon name="search" className="text-on-surface-variant ml-3" />
         <input
           className="bg-transparent border-none text-on-surface w-full focus:ring-0 placeholder:text-on-surface-variant/50 font-body-md focus:outline-none"
           placeholder="Search projects by name..."
@@ -91,9 +92,7 @@ export default async function ManageWorks() {
       <div className="glass-panel rounded-xl overflow-hidden border border-outline-variant/30">
         {works.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-20 px-6">
-            <span className="material-symbols-outlined text-on-surface-variant text-4xl mb-4">
-              deployed_code
-            </span>
+            <AppIcon name="deployed_code" className="text-on-surface-variant text-4xl mb-4" />
             <p className="font-body-lg text-body-lg text-on-surface font-bold mb-1">
               Belum ada project
             </p>
@@ -104,7 +103,7 @@ export default async function ManageWorks() {
               href="/dashboard/works/add"
               className="flex items-center gap-2 bg-secondary text-on-secondary-container px-6 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.3)] active:scale-95"
             >
-              <span className="material-symbols-outlined">add</span>
+              <AppIcon name="add" />
               <span>Add New Project</span>
             </Link>
           </div>
@@ -145,9 +144,7 @@ export default async function ManageWorks() {
                                 src={work.cover_image_url}
                               />
                             ) : (
-                              <span className="material-symbols-outlined text-outline-variant text-[24px]">
-                                image
-                              </span>
+                              <AppIcon name="image" className="text-outline-variant text-[24px]" />
                             )}
                           </div>
                           <div>
@@ -190,7 +187,7 @@ export default async function ManageWorks() {
                               className="text-on-surface-variant hover:text-secondary transition-colors"
                               title="Live Project"
                             >
-                              <span className="material-symbols-outlined text-[20px]">public</span>
+                              <AppIcon name="public" className="text-[20px]" />
                             </a>
                           )}
                           {work.repo_url && (
@@ -201,7 +198,7 @@ export default async function ManageWorks() {
                               className="text-on-surface-variant hover:text-secondary transition-colors"
                               title="Repository"
                             >
-                              <span className="material-symbols-outlined text-[20px]">code</span>
+                              <AppIcon name="code" className="text-[20px]" />
                             </a>
                           )}
                           {!work.project_url && !work.repo_url && (
@@ -221,13 +218,13 @@ export default async function ManageWorks() {
                             className="p-2 rounded hover:bg-secondary/20 text-secondary transition-colors"
                             title="Edit"
                           >
-                            <span className="material-symbols-outlined">edit</span>
+                            <AppIcon name="edit" />
                           </Link>
                           <button
                             className="p-2 rounded hover:bg-error/20 text-error transition-colors"
                             title="Delete"
                           >
-                            <span className="material-symbols-outlined">delete</span>
+                            <AppIcon name="delete" />
                           </button>
                         </div>
                       </td>
@@ -251,7 +248,7 @@ export default async function ManageWorks() {
         href="/dashboard/works/add"
         className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-secondary text-on-secondary-container rounded-full shadow-lg flex items-center justify-center z-50 active:scale-90 transition-transform"
       >
-        <span className="material-symbols-outlined">add</span>
+        <AppIcon name="add" />
       </Link>
     </DashboardShell>
   );

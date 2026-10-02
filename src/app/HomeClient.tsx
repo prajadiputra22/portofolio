@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useEffect, useRef, useState } from "react";
+import { AppIcon } from "@/components/AppIcon";
 import type { Profile } from "@/types/profile";
 
 export type WorkItem = {
@@ -198,9 +199,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
         <div className="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
           <Link href="/">
           <div className="flex items-center gap-1.5 md:gap-2 md:-ml-12">
-            <span className="material-symbols-outlined text-secondary text-lg md:text-2xl" data-icon="terminal">
-              terminal
-            </span>
+            <AppIcon name="terminal" className="text-secondary size-5 md:size-7" />
             <span className="font-label-mono text-[10px] md:text-label-mono tracking-widest text-secondary uppercase leading-tight">
               {profile.full_name}
             </span>
@@ -226,9 +225,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
             className="md:hidden cursor-pointer active:opacity-70 text-secondary"
             onClick={() => setIsMenuOpen(true)}
           >
-            <span className="material-symbols-outlined" data-icon="menu">
-              menu
-            </span>
+            <AppIcon name="menu" className="size-5" />
           </button>
         </div>
       </header>
@@ -244,9 +241,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
             NAVIGATION
           </span>
           <button className="text-on-surface-variant" onClick={() => setIsMenuOpen(false)}>
-            <span className="material-symbols-outlined" data-icon="close">
-              close
-            </span>
+            <AppIcon name="close" className="size-5" />
           </button>
         </div>
         <div className="flex flex-col gap-1.5">
@@ -261,9 +256,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
               href={`#${link.id}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              <span className="material-symbols-outlined text-lg" data-icon={link.icon}>
-                {link.icon}
-              </span>{" "}
+              <AppIcon name={link.icon as any} className="size-5" />
               {link.label}
             </a>
           ))}
@@ -353,12 +346,10 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                 direction="up"
                 className="glass-card rounded-3xl p-6 md:p-8 group hover:border-secondary/50 transition-colors flex flex-col items-center text-center"
               >
-                <span
-                  className="material-symbols-outlined text-secondary mb-4 md:mb-6 block text-[32px] md:text-[40px]"
-                  data-icon={service.icon}
-                >
-                  {service.icon}
-                </span>
+                <AppIcon
+                  name={service.icon as any}
+                  className="text-secondary mb-4 md:mb-6 block size-[32px] md:size-[40px]"
+                />
                 <h3 className="font-headline-md text-lg md:text-headline-md mb-3 md:mb-4 uppercase">
                   {service.title}
                 </h3>
@@ -409,9 +400,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                               sizes="(min-width: 768px) 33vw, 100vw"
                             />
                           ) : (
-                            <span className="material-symbols-outlined text-outline-variant text-4xl">
-                              image
-                            </span>
+                            <AppIcon name="image" className="text-outline-variant text-4xl" />
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent opacity-60" />
                         </div>
@@ -440,9 +429,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                               rel="noreferrer"
                             >
                               CASE STUDY{" "}
-                              <span className="material-symbols-outlined" data-icon="arrow_right_alt">
-                                arrow_right_alt
-                              </span>
+                              <AppIcon name="arrow_right_alt" className="size-4" />
                             </a>
                           ) : (
                             <span className="text-on-surface-variant/50 font-label-mono text-label-mono flex items-center gap-2 cursor-not-allowed">
@@ -557,9 +544,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                       href="#"
                     >
                       READ MORE{" "}
-                      <span className="material-symbols-outlined" data-icon="arrow_right_alt">
-                        arrow_right_alt
-                      </span>
+                      <AppIcon name="arrow_right_alt" className="size-4" />
                     </a>
                   </div>
                 </Reveal>
@@ -588,9 +573,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                 <div className="space-y-6 md:space-y-8">
                   <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
-                      <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="location_on">
-                        location_on
-                      </span>
+                      <AppIcon name="location_on" className="text-lg md:text-2xl" />
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
@@ -601,9 +584,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                   </Reveal>
                   <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
-                      <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="call">
-                        call
-                      </span>
+                      <AppIcon name="call" className="text-lg md:text-2xl" />
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
@@ -614,9 +595,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                   </Reveal>
                   <Reveal className="flex items-center gap-4 md:gap-6">
                     <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary shrink-0">
-                      <span className="material-symbols-outlined text-lg md:text-2xl" data-icon="alternate_email">
-                        alternate_email
-                      </span>
+                      <AppIcon name="alternate_email" className="text-lg md:text-2xl" />
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
@@ -718,9 +697,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                   >
                     {formStatus === "loading" ? (
                       <>
-                        <span className="material-symbols-outlined animate-spin text-lg" data-icon="progress_activity">
-                          progress_activity
-                        </span>
+                        <AppIcon name="progress_activity" className="animate-spin text-lg" />
                         SENDING...
                       </>
                     ) : formStatus === "success" ? (

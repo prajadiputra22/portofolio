@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Skill } from "@/types/skill";
+import { AppIcon } from "@/components/AppIcon";
 
 const EMPTY_FORM = { name: "", icon_url: "" };
 
@@ -10,9 +11,7 @@ function SkillIcon({ src, alt }: { src: string; alt: string }) {
 
   if (!src || errored) {
     return (
-      <span className="material-symbols-outlined text-on-surface-variant text-[22px]">
-        deployed_code
-      </span>
+      <AppIcon name="deployed_code" className="text-on-surface-variant text-[22px]" />
     );
   }
 
@@ -139,9 +138,10 @@ export default function ManageSkillsClient({
       {/* Add / Edit form */}
       <div className="glass-panel rounded-xl p-6 border border-outline-variant/30 mb-10">
         <div className="flex items-center gap-2 mb-6 border-b border-outline-variant/20 pb-4">
-          <span className="material-symbols-outlined text-secondary text-[24px]">
-            {editingId ? "edit" : "add_circle"}
-          </span>
+          <AppIcon
+            name={editingId ? "edit" : "add_circle"}
+            className="text-secondary text-[24px]"
+          />
           <h2 className="font-headline-md text-[20px] font-bold text-on-surface">
             {editingId ? "Edit Skill" : "Add New Skill"}
           </h2>
@@ -182,9 +182,7 @@ export default function ManageSkillsClient({
                     setForm((f) => ({ ...f, icon_url: e.target.value }))
                   }
                 />
-                <span className="material-symbols-outlined text-on-surface-variant absolute right-3 top-3.5 text-[18px]">
-                  link
-                </span>
+                <AppIcon name="link" className="text-on-surface-variant absolute right-3 top-3.5 text-[18px]" />
               </div>
               <div
                 className="w-12 h-12 rounded-lg bg-surface-container-high border border-outline-variant/30 flex items-center justify-center p-2 shrink-0"
@@ -209,9 +207,7 @@ export default function ManageSkillsClient({
               disabled={isSubmitting}
               onClick={handleSubmit}
             >
-              <span className="material-symbols-outlined text-[20px]">
-                {editingId ? "save" : "add"}
-              </span>
+              <AppIcon name={editingId ? "save" : "add"} className="text-[20px]" />
               <span>
                 {isSubmitting
                   ? "Saving..."
@@ -235,9 +231,7 @@ export default function ManageSkillsClient({
           </span>
         </div>
         <div className="glass-panel px-3 py-1.5 rounded-lg flex items-center gap-2 w-full md:w-72">
-          <span className="material-symbols-outlined text-on-surface-variant text-[18px]">
-            search
-          </span>
+          <AppIcon name="search" className="text-on-surface-variant text-[18px]" />
           <input
             className="bg-transparent border-none text-on-surface w-full focus:ring-0 placeholder:text-on-surface-variant/50 font-body-md text-xs focus:outline-none"
             placeholder="Search skills..."
@@ -288,9 +282,7 @@ export default function ManageSkillsClient({
                       <span className="truncate max-w-[320px]">
                         {skill.icon_url}
                       </span>
-                      <span className="material-symbols-outlined text-[14px]">
-                        open_in_new
-                      </span>
+                      <AppIcon name="open_in_new" className="text-[14px]" />
                     </a>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -300,18 +292,14 @@ export default function ManageSkillsClient({
                         title="Edit Skill"
                         onClick={() => handleEdit(skill)}
                       >
-                        <span className="material-symbols-outlined text-[20px]">
-                          edit
-                        </span>
+                        <AppIcon name="edit" className="text-[20px]" />
                       </button>
                       <button
                         className="p-2 rounded hover:bg-error/20 text-error transition-colors"
                         title="Delete Skill"
                         onClick={() => handleDelete(skill)}
                       >
-                        <span className="material-symbols-outlined text-[20px]">
-                          delete
-                        </span>
+                        <AppIcon name="delete" className="text-[20px]" />
                       </button>
                     </div>
                   </td>

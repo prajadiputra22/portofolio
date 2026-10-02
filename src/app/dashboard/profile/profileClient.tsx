@@ -159,19 +159,15 @@ export default function ManageProfileClient({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-on-surface-variant">
-                        <span className="material-symbols-outlined text-5xl">person</span>
+                        <AppIcon name="person" className="text-5xl" />
                       </div>
                     )}
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity rounded-full">
                     {uploadStatus === "uploading" ? (
-                      <span className="material-symbols-outlined text-secondary text-3xl animate-spin">
-                        sync
-                      </span>
+                      <AppIcon name="sync" className="text-secondary text-3xl animate-spin" />
                     ) : (
-                      <span className="material-symbols-outlined text-secondary text-3xl">
-                        photo_camera
-                      </span>
+                      <AppIcon name="photo_camera" className="text-secondary text-3xl" />
                     )}
                   </div>
                 </div>
@@ -287,8 +283,8 @@ export default function ManageProfileClient({
                     Location
                   </label>
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">
-                      location_on
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2">
+                      <AppIcon name="location_on" className="text-on-surface-variant text-[20px]" />
                     </span>
                     <input
                       className="w-full bg-surface-container-lowest border border-outline-variant/40 p-4 pl-12 text-on-surface rounded-lg focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all"
@@ -369,17 +365,15 @@ export default function ManageProfileClient({
                   </h3>
                   <div className="space-y-4">
                     {[
-                      { key: "linkedin_url" as const, icon: "work", label: "LinkedIn" },
-                      { key: "github_url" as const, icon: "code", label: "GitHub" },
-                      { key: "instagram_url" as const, icon: "photo_camera", label: "Instagram" },
+                      { key: "linkedin_url" as const, icon: "work" as const, label: "LinkedIn" },
+                      { key: "github_url" as const, icon: "code" as const, label: "GitHub" },
+                      { key: "instagram_url" as const, icon: "photo_camera" as const, label: "Instagram" },
                     ].map((social) => (
                       <div
                         key={social.key}
                         className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/20"
                       >
-                        <span className="material-symbols-outlined text-on-surface-variant shrink-0">
-                          {social.icon}
-                        </span>
+                        <AppIcon name={social.icon} className="text-on-surface-variant shrink-0" />
                         <div className="flex-grow min-w-0">
                           <p className="text-sm text-on-surface mb-1">{social.label}</p>
                           <input
@@ -395,7 +389,7 @@ export default function ManageProfileClient({
                             onClick={() => updateField(social.key, "")}
                             className="text-on-surface-variant hover:text-error transition-colors shrink-0"
                           >
-                            <span className="material-symbols-outlined text-[20px]">link_off</span>
+                            <AppIcon name="link_off" className="text-[20px]" />
                           </button>
                         ) : null}
                       </div>
@@ -415,7 +409,7 @@ export default function ManageProfileClient({
                     disabled={!isDirty || saveStatus === "saving"}
                     className="text-on-surface-variant hover:text-on-surface font-mono text-xs uppercase tracking-widest transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <span className="material-symbols-outlined text-[18px]">restart_alt</span>
+                    <AppIcon name="restart_alt" className="text-[18px]" />
                     Discard Changes
                   </button>
                   <button
@@ -430,20 +424,20 @@ export default function ManageProfileClient({
                   >
                     {saveStatus === "saving" && (
                       <>
-                        <span className="material-symbols-outlined animate-spin">sync</span>
+                        <AppIcon name="sync" className="animate-spin" />
                         Saving...
                       </>
                     )}
                     {saveStatus === "success" && (
                       <>
-                        <span className="material-symbols-outlined">done_all</span>
+                        <AppIcon name="done_all" />
                         Changes Saved
                       </>
                     )}
                     {(saveStatus === "idle" || saveStatus === "error") && (
                       <>
                         Save Changes
-                        <span className="material-symbols-outlined">check_circle</span>
+                        <AppIcon name="check_circle" />
                       </>
                     )}
                   </button>

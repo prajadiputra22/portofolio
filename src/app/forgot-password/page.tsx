@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AppIcon } from "@/components/AppIcon";
 
 type SubmitStatus = "idle" | "validating" | "success" | "error";
 
@@ -60,7 +61,7 @@ export default function ForgotPassword() {
 
           {submitStatus === "success" ? (
             <div className="text-center space-y-4">
-              <span className="material-symbols-outlined text-secondary text-[48px]">mark_email_read</span>
+              <AppIcon name="mark_email_read" className="mx-auto text-secondary size-12" />
               <p className="text-on-surface">
                 Jika email terdaftar, instruksi reset password sudah dikirim. Cek inbox kamu.
               </p>
@@ -75,9 +76,10 @@ export default function ForgotPassword() {
                   Email
                 </label>
                 <div className="relative group">
-                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">
-                    mail
-                  </span>
+                  <AppIcon
+                    name="mail"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+                  />
                   <input
                     className="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all placeholder:text-on-surface-variant/40"
                     id="email"
@@ -102,12 +104,12 @@ export default function ForgotPassword() {
               >
                 {submitStatus === "validating" ? (
                   <>
-                    <span className="material-symbols-outlined text-[20px] animate-spin">sync</span>
+                    <AppIcon name="sync" className="size-5 animate-spin" />
                     Mengirim...
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined text-[20px]">send</span>
+                    <AppIcon name="send" className="size-5" />
                     Submit
                   </>
                 )}

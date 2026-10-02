@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import SkillsInput from "@/components/SkillsInput";
 import DashboardShell from "@/components/Dashboardshell";
+import { AppIcon } from "@/components/AppIcon";
 
 const DESCRIPTION_MAX_LENGTH = 100;
 
@@ -113,7 +114,7 @@ export default function AddProject() {
             {/* Project Identity Card */}
             <div className="glass-panel rounded-xl p-6 relative overflow-hidden group">
               <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-on-surface-variant">edit_document</span>
+                <AppIcon name="edit_document" className="text-on-surface-variant" />
                 Core Details
               </h2>
               <div className="space-y-5 relative z-10">
@@ -166,7 +167,7 @@ export default function AddProject() {
             {/* Image Upload Card */}
             <div className="glass-panel rounded-xl p-6 h-full flex flex-col">
               <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-on-surface-variant">image</span>
+                <AppIcon name="image" className="text-on-surface-variant" />
                 Cover Media
               </h2>
               <div
@@ -197,7 +198,7 @@ export default function AddProject() {
                 {fileName ? (
                   <>
                     <div className="bg-secondary/10 p-3 rounded-full mb-4 shadow-sm text-secondary">
-                      <span className="material-symbols-outlined text-3xl">check_circle</span>
+                      <AppIcon name="check_circle" className="text-3xl" />
                     </div>
                     <p className="font-body-md text-body-md text-secondary mb-1 truncate w-full px-4">
                       {fileName}
@@ -217,9 +218,7 @@ export default function AddProject() {
                 ) : (
                   <>
                     <div className="bg-surface-container-highest p-3 rounded-full mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                      <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary text-3xl">
-                        cloud_upload
-                      </span>
+                      <AppIcon name="cloud_upload" className="text-on-surface-variant group-hover:text-secondary text-3xl" />
                     </div>
                     <p className="font-body-md text-body-md text-on-surface mb-1">Drag and drop image here</p>
                     <p className="font-caption text-caption text-on-surface-variant mb-4">
@@ -251,7 +250,7 @@ export default function AddProject() {
           {/* URLs Card */}
           <div className="glass-panel rounded-xl p-6">
             <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-on-surface-variant">link</span>
+              <AppIcon name="link" className="text-on-surface-variant" />
               Resources
             </h2>
             <div className="grid gap-6">
@@ -264,7 +263,7 @@ export default function AddProject() {
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <span className="material-symbols-outlined text-on-surface-variant text-lg">public</span>
+                    <AppIcon name="public" className="text-on-surface-variant text-lg" />
                   </span>
                   <input
                     id="project-link"
@@ -286,7 +285,7 @@ export default function AddProject() {
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <span className="material-symbols-outlined text-on-surface-variant text-lg">code</span>
+                    <AppIcon name="code" className="text-on-surface-variant text-lg" />
                   </span>
                   <input
                     id="github-link"
@@ -305,7 +304,7 @@ export default function AddProject() {
           {/* Skills Card */}
           <div className="glass-panel rounded-xl p-6">
             <h2 className="font-body-lg text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-on-surface-variant">psychology</span>
+              <AppIcon name="psychology" className="text-on-surface-variant" />
               Skills / Tech Stack
             </h2>
             <SkillsInput onChange={setSkills} />

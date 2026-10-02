@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardShell from "@/components/Dashboardshell";
+import { AppIcon } from "@/components/AppIcon";
 
 const quickActions = [
   {
@@ -132,7 +133,7 @@ export default function Dashboard() {
         <label className="flex flex-col min-w-40 !h-9 max-w-64 flex-1 md:flex-none">
           <div className="flex w-full flex-1 items-stretch rounded h-full">
             <div className="text-on-surface-variant flex border-none bg-surface-container-high items-center justify-center pl-4 rounded-l border-r-0">
-              <span className="material-symbols-outlined text-sm">search</span>
+              <AppIcon name="search" className="text-sm" />
             </div>
             <input
               className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-on-surface focus:outline-0 focus:ring-0 border-none bg-surface-container-high focus:border-none h-full placeholder:text-on-surface-variant px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal"
@@ -145,13 +146,13 @@ export default function Dashboard() {
             className="flex items-center justify-center rounded h-9 w-9 bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors"
             type="button"
           >
-            <span className="material-symbols-outlined text-[20px]">notifications</span>
+            <AppIcon name="notifications" className="text-[20px]" />
           </button>
           <button
             className="flex items-center justify-center rounded h-9 w-9 bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors"
             type="button"
           >
-            <span className="material-symbols-outlined text-[20px]">settings</span>
+            <AppIcon name="settings" className="text-[20px]" />
           </button>
         </div>
       </div>
@@ -198,7 +199,7 @@ export default function Dashboard() {
               </span>
               <span className="text-lg font-bold">{action.title}</span>
             </div>
-            <span className="material-symbols-outlined text-2xl">{action.icon}</span>
+            <AppIcon name={action.icon as any} className="text-2xl" />
           </button>
         ))}
       </section>
@@ -211,12 +212,7 @@ export default function Dashboard() {
             className="stat-card-glow flex flex-col gap-4 rounded-xl p-6 bg-surface-container-low border border-outline-variant relative overflow-hidden transition-all hover:shadow-[0_0_20px_rgba(189,198,224,0.1)] hover:border-primary"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10">
-              <span
-                className="material-symbols-outlined text-6xl"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                {stat.icon}
-              </span>
+              <AppIcon name={stat.icon as any} className="text-6xl" />
             </div>
             <div className="flex flex-col gap-1">
               <p className="text-on-surface-variant text-sm font-medium uppercase tracking-widest">
@@ -256,7 +252,7 @@ export default function Dashboard() {
                 <div
                   className={`size-10 rounded-lg ${activity.iconBg} flex items-center justify-center ${activity.iconColor}`}
                 >
-                  <span className="material-symbols-outlined">{activity.icon}</span>
+                  <AppIcon name={activity.icon as any} />
                 </div>
                 <div className="flex-1">
                   <p className="text-on-surface text-sm font-semibold">{activity.title}</p>

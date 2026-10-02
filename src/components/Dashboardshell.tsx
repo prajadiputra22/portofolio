@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AppIcon } from "@/components/AppIcon";
 
 const sidebarNav = [
   { icon: "dashboard", label: "Dashboard", href: "/dashboard" },
@@ -47,7 +48,7 @@ function Sidebar({
                   : "flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/30 transition-colors"
               }
             >
-              <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+              <AppIcon name={item.icon as any} className="size-5" />
               <span className="font-body-md text-sm">{item.label}</span>
             </Link>
           );
@@ -62,7 +63,7 @@ function Sidebar({
             rel="noreferrer"
             className="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold cursor-pointer active:scale-95 transition-transform flex items-center justify-center gap-2"
           >
-            <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+            <AppIcon name="open_in_new" className="size-[18px]" />
             View Live Site
           </a>
         </div>
@@ -107,7 +108,7 @@ export default function DashboardShell({
             onClick={() => setIsDrawerOpen(false)}
             type="button"
           >
-            <span className="material-symbols-outlined">close</span>
+            <AppIcon name="close" className="size-5" />
           </button>
           <Sidebar mobile onNavigate={() => setIsDrawerOpen(false)} />
         </aside>
@@ -125,7 +126,7 @@ export default function DashboardShell({
             onClick={() => setIsDrawerOpen(true)}
             type="button"
           >
-            <span className="material-symbols-outlined text-[20px]">menu</span>
+            <AppIcon name="menu" className="size-5" />
           </button>
         </header>
 
