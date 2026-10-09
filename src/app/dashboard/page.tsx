@@ -145,12 +145,14 @@ export default function Dashboard() {
           <button
             className="flex items-center justify-center rounded h-9 w-9 bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors"
             type="button"
+            aria-label="View notifications"
           >
             <AppIcon name="notifications" className="text-[20px]" />
           </button>
           <button
             className="flex items-center justify-center rounded h-9 w-9 bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors"
             type="button"
+            aria-label="Open settings"
           >
             <AppIcon name="settings" className="text-[20px]" />
           </button>

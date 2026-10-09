@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { unstable_cache } from "next/cache";
 import HomeClient, { type WorkItem } from "./HomeClient";
 
 type RawSkill = { id: string; name: string; icon_url: string | null };
@@ -38,12 +39,29 @@ async function getWorks(): Promise<WorkItem[]> {
   }));
 }
 
+const getCachedWorks = unstable_cache(getWorks, ["portfolio-works"], {
+  revalidate: 60,
+  tags: ["portfolio-works"],
+});
+
+const getCachedProfile = unstable_cache(
+  async () => {
+    const { data, error } = await supabaseAdmin
+      .from("profile")
+      .select(
+        "id, full_name, hero_greeting, hero_headline, bio, role_title, avatar_url, resume_url, location, phone, email, linkedin_url, github_url, instagram_url, updated_at"
+      )
+      .maybeSingle();
+
+    if (error) return null;
+    return data;
+  },
+  ["portfolio-profile"],
+  { revalidate: 60, tags: ["portfolio-profile"] }
+);
+
 export default async function Page() {
-  // Dijalankan paralel (sebelumnya berurutan / waterfall).
-  const [works, { data: profile }] = await Promise.all([
-    getWorks(),
-    supabaseAdmin.from("profile").select("*").maybeSingle(),
-  ]);
+  const [works, profile] = await Promise.all([getCachedWorks(), getCachedProfile()]);
 
   const safeProfile = profile ?? {
     id: 0,

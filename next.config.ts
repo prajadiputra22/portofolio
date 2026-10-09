@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Inline CSS ke HTML: menghilangkan request CSS yang render-blocking
     inlineCss: true,
+    optimizePackageImports: ["lucide-react"],
   },
   images: {
   formats: ["image/avif", "image/webp"],
@@ -16,7 +17,12 @@ async headers() {
   return [
     {
       source: "/pictures/:path*",
-      headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }],
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=31536000, immutable",
+        },
+      ],
     },
   ];
 },

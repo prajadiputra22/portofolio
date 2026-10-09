@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from 'next/link';
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { AppIcon } from "@/components/AppIcon";
 import type { Profile } from "@/types/profile";
 
@@ -65,38 +65,7 @@ const skillTags = [
   { name: "Mikrotik", icon: "https://cdn.simpleicons.org/mikrotik/e0e3e5" },
 ];
 
-const blogPosts = [
-  {
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBsn6CHLDd6FlJR09XLnE4aa1h8xrDKfmM8O730UiMhHB1zFAUbGH6yUmGRI-Pvvnd2Zfp0kztFkNgP19VjiTiN0sVFPrJlvq8nW0Kcby0BeR-REORwGrRg2wCYn8TuYKeOnmxkVModvQDrX_zxDZv9YjicdPGvri9yEhJdA9guk1IC1hRO0pzdLRQ75YAIQ7NNiKmp8nRPGxb7d8mfS-7OgOFjpkNZupMGFbERiR5c51Sr3aTOXsMUcxLED4sYB3A2mLZa73iGPooy",
-    alt: "Next.js visualization",
-    category: "Web Development",
-    title: "Exploring the Future of Next.js",
-    description:
-      "An in-depth look at the evolution of server components and the impact on modern web architecture.",
-  },
-  {
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAMixXsyDKiCs3-ynrZBczKh43QA6TCgzUyqq4fmuzxtUttzES4LDCKd8oCzfd9taOfYEu2y9tTNczoOVpWNJGDjvFz1HxDr9HV4SqNeqTtPyw7aV7TFg0BbhFPbYSv2cCrc4DU2jLYisfSHthnd9QpjMkN2sCLRbV_GB2FmGhMTA4Ar5teHtTqm6EVTkgpgtp6EtuLjgcZ0spsMqEkfJd1CSXMAuWza5AJqk8e9IF6iZ3gzgnqyDhSYFzIYCofzI7VU34J43bRaKK5",
-    alt: "Tailwind CSS code",
-    category: "Tutorial",
-    title: "Mastering Tailwind CSS Grids",
-    description:
-      "Building complex, responsive layouts with precision using Tailwind's powerful grid utility system.",
-  },
-  {
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCej5p3leN5LBjH2MG09PDLOThMM2a0X29nTVKrQbosYx4KKDtGmUeXH2u44RuartbnR0hVtanepNMZN9F_5EqGQU0VbipWSm5GAKm9p5pvkT8i19uieICO9_imWmtfxL-NnnyoEr1_VpA3IOaVLqAaU8Ih05I3-WOnZ2cOkOWhVWqqFBE73mzzeZlXes4pOeY7J3JKm9cVo_vsOJxJS92E21NDhE4PjV4HoOQRY5wWY8BpDhuyUwhTJJA80b-OZFGW7g9yjW86IfTp",
-    alt: "Clean code on screen",
-    category: "Architecture",
-    title: "Clean Code in Backend Logic",
-    description:
-      "Strategies for maintaining scalable and readable server-side codebases in high-traffic applications.",
-  },
-];
-
-// Komponen reveal generik: elemen slide masuk saat pertama kali terlihat di viewport.
-// direction "up" = slide dari bawah (default), "left" = slide dari kanan ke kiri.
+// Wrapper presentational ringan untuk konten non-critical di bawah fold.
 function Reveal({
   children,
   className = "",
@@ -108,47 +77,13 @@ function Reveal({
   direction?: "up" | "left";
   instant?: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || instant) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [instant]);
-
-  // Konten above-the-fold (LCP) TIDAK boleh disembunyikan (opacity-0) menunggu JS.
-  // Pakai animasi CSS murni (hanya transform) supaya langsung ter-paint.
   if (instant) {
-    return (
-      <div ref={ref} className={`animate-hero-in motion-reduce:animate-none ${className}`}>
-        {children}
-      </div>
-    );
+    return <div className={`animate-hero-in motion-reduce:animate-none ${className}`}>{children}</div>;
   }
-
-  const hiddenTransform = direction === "left" ? "translate-x-16" : "translate-y-12";
 
   return (
     <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out motion-reduce:transition-none motion-reduce:transform-none ${
-        visible ? "opacity-100 translate-x-0 translate-y-0" : `opacity-0 ${hiddenTransform}`
-      } ${className}`}
+      className={`${direction === "left" ? "reveal-on-scroll-left" : "reveal-on-scroll"} ${className}`}
     >
       {children}
     </div>
@@ -166,31 +101,11 @@ function splitHeadline(headline: string) {
 
 export default function HomeClient({ works, profile }: { works: WorkItem[]; profile: Profile }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const { lead: headlineLead, emphasis: headlineEmphasis } = splitHeadline(
     profile.hero_headline || "Welcome To My Portfolio"
   );
-
-  useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.getAttribute("id") || "home");
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <>
@@ -210,11 +125,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
             {navLinks.map((link) => (
               <a
                 key={link.id}
-                className={`font-label-mono text-caption uppercase tracking-wider transition-colors ${
-                  activeSection === link.id
-                    ? "text-secondary"
-                    : "text-on-surface hover:text-secondary"
-                }`}
+                className="font-label-mono text-caption uppercase tracking-wider text-on-surface hover:text-secondary transition-colors"
                 href={`#${link.id}`}
               >
                 {link.label}
@@ -224,6 +135,8 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
           <button
             className="md:hidden cursor-pointer active:opacity-70 text-secondary"
             onClick={() => setIsMenuOpen(true)}
+            aria-label="Open navigation menu"
+            type="button"
           >
             <AppIcon name="menu" className="size-5" />
           </button>
@@ -240,7 +153,12 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
           <span className="font-headline-md text-lg text-on-surface uppercase">
             NAVIGATION
           </span>
-          <button className="text-on-surface-variant" onClick={() => setIsMenuOpen(false)}>
+          <button
+            className="text-on-surface-variant"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close navigation menu"
+            type="button"
+          >
             <AppIcon name="close" className="size-5" />
           </button>
         </div>
@@ -248,11 +166,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
           {navLinks.map((link) => (
             <a
               key={link.id}
-              className={`flex items-center gap-3 p-3 rounded-lg font-label-mono text-[13px] transition-all ${
-                activeSection === link.id
-                  ? "bg-secondary/10 text-secondary border-r-4 border-secondary"
-                  : "text-on-surface-variant hover:bg-surface-variant/50"
-              }`}
+              className="flex items-center gap-3 p-3 rounded-lg font-label-mono text-[13px] text-on-surface-variant hover:bg-surface-variant/50 transition-colors"
               href={`#${link.id}`}
               onClick={() => setIsMenuOpen(false)}
             >
@@ -330,7 +244,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
 
         {/* Services Section */}
         <section
-          className={`py-16 md:py-24 px-margin-mobile md:px-margin-desktop overflow-hidden`}
+          className={`below-fold py-16 md:py-24 px-margin-mobile md:px-margin-desktop overflow-hidden`}
           id="services"
         >
           <Reveal className="mb-10 md:mb-16">
@@ -365,7 +279,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
         </section>
 
         {/* Works Section */}
-        <section className={`py-16 md:py-24 bg-surface-container-lowest`} id="works">
+        <section className={`below-fold py-16 md:py-24 bg-surface-container-lowest`} id="works">
           <div className="px-margin-mobile md:px-margin-desktop overflow-hidden">
             <Reveal className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
@@ -423,13 +337,16 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                           </p>
                           {caseStudyLink ? (
                             <a
-                              className="text-secondary font-label-mono text-label-mono flex items-center gap-2 hover:gap-4 transition-all"
+                              className="text-secondary font-label-mono text-label-mono flex items-center gap-2 group/link"
                               href={caseStudyLink}
                               target="_blank"
                               rel="noreferrer"
                             >
                               CASE STUDY{" "}
-                              <AppIcon name="arrow_right_alt" className="size-4" />
+                              <AppIcon
+                                name="arrow_right_alt"
+                                className="size-4 transition-transform group-hover/link:translate-x-1"
+                              />
                             </a>
                           ) : (
                             <span className="text-on-surface-variant/50 font-label-mono text-label-mono flex items-center gap-2 cursor-not-allowed">
@@ -448,7 +365,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
 
         {/* Skills Section - animasi per section, slide dari kanan ke kiri */}
         <section
-          className={`py-6 md:py-10 overflow-hidden`}
+          className={`below-fold py-6 md:py-10 overflow-hidden`}
           id="skills"
         >
           <Reveal
@@ -488,74 +405,10 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
               </div>
             </div>
           </Reveal>
-          <style jsx>{`
-            @keyframes marquee {
-              from {
-                transform: translateX(0);
-              }
-              to {
-                transform: translateX(-50%);
-              }
-            }
-            .animate-marquee {
-              animation: marquee 22s linear infinite;
-            }
-          `}</style>
         </section>
-
-        {/* Blog Section - disembunyikan sementara */}
-        {false && (
-        <section className={`py-16 md:py-24 bg-surface-container-lowest`} id="blog">
-          <div className="px-margin-mobile md:px-margin-desktop">
-            <Reveal className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div>
-                <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
-                  Latest Insights
-                </h2>
-                <div className="h-1 w-20 bg-secondary" />
-              </div>
-            </Reveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              {blogPosts.map((post) => (
-                <Reveal
-                  key={post.title}
-                  className="group bg-surface-container rounded-3xl border border-outline-variant/30 overflow-hidden transition-all hover:border-secondary/30"
-                >
-                  <div className="aspect-video bg-surface-variant/30 flex items-center justify-center overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={post.alt}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      src={post.image}
-                    />
-                  </div>
-                  <div className="p-4 md:p-6">
-                    <span className="text-caption font-label-mono text-secondary uppercase tracking-wider mb-2 md:mb-3 block">
-                      {post.category}
-                    </span>
-                    <h3 className="font-headline-md text-lg md:text-headline-md mb-2 md:mb-3 leading-tight">
-                      {post.title}
-                    </h3>
-                    <p className="text-on-surface-variant text-sm md:text-body-md mb-4 md:mb-6 line-clamp-2">
-                      {post.description}
-                    </p>
-                    <a
-                      className="text-secondary font-label-mono text-label-mono flex items-center gap-2 hover:gap-4 transition-all"
-                      href="#"
-                    >
-                      READ MORE{" "}
-                      <AppIcon name="arrow_right_alt" className="size-4" />
-                    </a>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-        )}
 
         {/* Contact Section */}
-        <section className={`py-16 md:py-24 bg-surface-container-low`} id="contact">
+        <section className={`below-fold py-16 md:py-24 bg-surface-container-low`} id="contact">
           <div className="px-margin-mobile md:px-margin-desktop">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
               <div>

@@ -107,6 +107,7 @@ export default function DashboardShell({
             className="absolute top-6 right-4 text-on-surface-variant hover:text-on-surface"
             onClick={() => setIsDrawerOpen(false)}
             type="button"
+            aria-label="Close dashboard menu"
           >
             <AppIcon name="close" className="size-5" />
           </button>
@@ -125,6 +126,7 @@ export default function DashboardShell({
             className="flex items-center justify-center rounded h-9 w-9 text-on-surface"
             onClick={() => setIsDrawerOpen(true)}
             type="button"
+            aria-label="Open dashboard menu"
           >
             <AppIcon name="menu" className="size-5" />
           </button>
