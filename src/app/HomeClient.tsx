@@ -3,8 +3,19 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from "react";
-import { AppIcon } from "@/components/AppIcon";
+import { AppIcon, type AppIconName } from "@/components/AppIcon";
+import HomeFooter from "@/components/portfolio/HomeFooter";
+import HomeHeader from "@/components/portfolio/HomeHeader";
 import type { Profile } from "@/types/profile";
+
+export type BlogItem = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImageUrl: string | null;
+  category: string | null;
+};
 
 export type WorkItem = {
   id: string;
@@ -16,15 +27,12 @@ export type WorkItem = {
   tags: string[];
 };
 
-const navLinks = [
-  { id: "home", label: "Home", icon: "home" },
-  { id: "services", label: "Services", icon: "rebase_edit" },
-  { id: "works", label: "Works", icon: "grid_view" },
-  // { id: "blog", label: "Blog", icon: "article" },
-  { id: "contact", label: "Contact", icon: "mail" },
-];
-
-const services = [
+const services: {
+  icon: AppIconName;
+  title: string;
+  description: string;
+  points: string[];
+}[] = [
   {
     icon: "web",
     title: "Front End Developer",
@@ -99,8 +107,15 @@ function splitHeadline(headline: string) {
   return { lead: words.join(" ") + " ", emphasis };
 }
 
-export default function HomeClient({ works, profile }: { works: WorkItem[]; profile: Profile }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function HomeClient({
+  works,
+  blogs,
+  profile,
+}: {
+  works: WorkItem[];
+  blogs: BlogItem[];
+  profile: Profile;
+}) {
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const { lead: headlineLead, emphasis: headlineEmphasis } = splitHeadline(
@@ -109,73 +124,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
 
   return (
     <>
-      {/* TopAppBar Shell */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
-        <div className="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
-          <Link href="/">
-          <div className="flex items-center gap-1.5 md:gap-2 md:-ml-12">
-            <AppIcon name="terminal" className="text-secondary size-5 md:size-7" />
-            <span className="font-label-mono text-[10px] md:text-label-mono tracking-widest text-secondary uppercase leading-tight">
-              {profile.full_name}
-            </span>
-          </div>
-          </Link>
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex md:-mr-14 items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                className="font-label-mono text-caption uppercase tracking-wider text-on-surface hover:text-secondary transition-colors"
-                href={`#${link.id}`}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-          <button
-            className="md:hidden cursor-pointer active:opacity-70 text-secondary"
-            onClick={() => setIsMenuOpen(true)}
-            aria-label="Open navigation menu"
-            type="button"
-          >
-            <AppIcon name="menu" className="size-5" />
-          </button>
-        </div>
-      </header>
-
-      {/* Navigation Drawer (Mobile) */}
-      <nav
-        className={`fixed right-0 top-0 h-full z-[60] flex flex-col p-5 bg-surface-container-high dark:bg-surface-container-high w-64 shadow-xl transition-transform duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex justify-between items-center mb-6">
-          <span className="font-headline-md text-lg text-on-surface uppercase">
-            NAVIGATION
-          </span>
-          <button
-            className="text-on-surface-variant"
-            onClick={() => setIsMenuOpen(false)}
-            aria-label="Close navigation menu"
-            type="button"
-          >
-            <AppIcon name="close" className="size-5" />
-          </button>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          {navLinks.map((link) => (
-            <a
-              key={link.id}
-              className="flex items-center gap-3 p-3 rounded-lg font-label-mono text-[13px] text-on-surface-variant hover:bg-surface-variant/50 transition-colors"
-              href={`#${link.id}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <AppIcon name={link.icon as any} className="size-5" />
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </nav>
+      <HomeHeader fullName={profile.full_name} />
 
       <main className="pt-18">
         {/* Hero Section */}
@@ -261,7 +210,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
                 className="glass-card rounded-3xl p-6 md:p-8 group hover:border-secondary/50 transition-colors flex flex-col items-center text-center"
               >
                 <AppIcon
-                  name={service.icon as any}
+                  name={service.icon}
                   className="text-secondary mb-4 md:mb-6 block size-[32px] md:size-[40px]"
                 />
                 <h3 className="font-headline-md text-lg md:text-headline-md mb-3 md:mb-4 uppercase">
@@ -405,6 +354,74 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
               </div>
             </div>
           </Reveal>
+        </section>
+
+        {/* Latest Insights Section */}
+        <section
+          className="below-fold py-16 md:py-24 bg-surface-container-lowest"
+          id="blog"
+        >
+          <div className="px-margin-mobile md:px-margin-desktop overflow-hidden">
+            <Reveal className="mb-10 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
+                  Latest Insights
+                </h2>
+                <div className="h-1 w-20 bg-secondary" />
+              </div>
+              <p className="font-label-mono text-caption text-on-surface-variant uppercase tracking-wider max-w-xs">
+                Thoughts on architecture, performance, and the web.
+              </p>
+            </Reveal>
+
+            {blogs.length === 0 ? (
+              <Reveal className="glass-card rounded-3xl p-10 text-center text-on-surface-variant">
+                Belum ada artikel yang dipublikasikan.
+              </Reveal>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                {blogs.map((blog) => (
+                  <Reveal
+                    key={blog.id}
+                    className="group overflow-hidden bg-surface-container rounded-3xl border border-outline-variant/30 transition-all hover:-translate-y-2"
+                  >
+                    <Link href={`/blog/${blog.slug}`} className="block h-full">
+                      <div className="aspect-video relative overflow-hidden bg-surface-variant/30 flex items-center justify-center">
+                        {blog.coverImageUrl ? (
+                          <Image
+                            src={blog.coverImageUrl}
+                            alt={blog.title}
+                            fill
+                            sizes="(min-width: 768px) 33vw, 100vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <AppIcon name="article" className="text-outline-variant text-4xl" />
+                        )}
+                      </div>
+                      <div className="p-4 md:p-5">
+                        {blog.category && (
+                          <p className="font-label-mono text-[10px] uppercase tracking-wider text-secondary mb-2">
+                            {blog.category}
+                          </p>
+                        )}
+                        <h3 className="font-headline-md text-base md:text-lg mb-2 line-clamp-2">
+                          {blog.title}
+                        </h3>
+                        <p className="text-on-surface-variant text-xs md:text-sm mb-4 line-clamp-3">
+                          {blog.excerpt}
+                        </p>
+                        <span className="text-secondary font-label-mono text-caption flex items-center gap-2">
+                          READ MORE
+                          <AppIcon name="arrow_right_alt" className="size-4" />
+                        </span>
+                      </div>
+                    </Link>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Contact Section */}
@@ -568,49 +585,7 @@ export default function HomeClient({ works, profile }: { works: WorkItem[]; prof
         </section>
       </main>
 
-      {/* Footer Shell */}
-      <footer className="w-full py-8 md:py-10 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20">
-        <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-3 md:gap-4">
-          <span className="font-label-mono text-[11px] md:text-label-mono text-secondary uppercase text-center">
-            {profile.full_name}
-          </span>
-          <p className="font-caption text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-all text-center">
-            © {new Date().getFullYear()} {profile.full_name}.
-          </p>
-          <div className="flex gap-4 md:gap-6">
-            {profile.linkedin_url && (
-              <a
-                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-                href={profile.linkedin_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                LinkedIn
-              </a>
-            )}
-            {profile.github_url && (
-              <a
-                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-                href={profile.github_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                GitHub
-              </a>
-            )}
-            {profile.instagram_url && (
-              <a
-                className="font-caption text-caption text-on-surface-variant hover:text-secondary underline decoration-secondary/30 transition-all"
-                href={profile.instagram_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Instagram
-              </a>
-            )}
-          </div>
-        </div>
-      </footer>
+      <HomeFooter profile={profile} />
     </>
   );
 }

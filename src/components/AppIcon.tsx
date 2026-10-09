@@ -1,16 +1,22 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  ArrowLeft,
+  ArrowLeftRight,
   ArrowRight,
   ArrowUpDown,
   Bell,
+  Bold,
   Brain,
   BriefcaseBusiness,
   Camera,
   CheckCheck,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clock3,
   Code2,
+  Copy,
   Download,
   Eye,
   EyeOff,
@@ -21,9 +27,11 @@ import {
   Globe,
   Grid2x2,
   Home,
+  Italic,
   ImageIcon,
   LayoutGrid,
   Link2,
+  List,
   LoaderCircle,
   Lock,
   Mail,
@@ -35,6 +43,7 @@ import {
   Phone,
   Plus,
   PlusCircle,
+  Quote,
   RefreshCw,
   Rocket,
   RotateCcw,
@@ -113,7 +122,17 @@ export type AppIconName =
   | "grid_view"
   | "article"
   | "publish"
-  | "unpublish";
+  | "unpublish"
+  | "arrow_back"
+  | "schedule"
+  | "swap_horiz"
+  | "expand_more"
+  | "content_copy"
+  | "format_bold"
+  | "format_italic"
+  | "format_quote"
+  | "format_list_bulleted"
+  | "code_blocks";
 
 const APP_ICONS: Record<AppIconName, LucideIcon> = {
   terminal: Terminal,
@@ -176,6 +195,16 @@ const APP_ICONS: Record<AppIconName, LucideIcon> = {
   article: FileText,
   publish: Rocket,
   unpublish: RotateCcw,
+  arrow_back: ArrowLeft,
+  schedule: Clock3,
+  swap_horiz: ArrowLeftRight,
+  expand_more: ChevronDown,
+  content_copy: Copy,
+  format_bold: Bold,
+  format_italic: Italic,
+  format_quote: Quote,
+  format_list_bulleted: List,
+  code_blocks: Code2,
 };
 
 export function AppIcon({

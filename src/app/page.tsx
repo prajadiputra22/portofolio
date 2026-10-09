@@ -1,8 +1,16 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { unstable_cache } from "next/cache";
-import HomeClient, { type WorkItem } from "./HomeClient";
+import HomeClient, { type BlogItem, type WorkItem } from "./HomeClient";
 
 type RawSkill = { id: string; name: string; icon_url: string | null };
+type RawBlogRow = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_image_url: string | null;
+  category: { name: string } | { name: string }[] | null;
+};
 type RawWorkRow = {
   id: string;
   title: string;
@@ -44,6 +52,34 @@ const getCachedWorks = unstable_cache(getWorks, ["portfolio-works"], {
   tags: ["portfolio-works"],
 });
 
+async function getBlogs(): Promise<BlogItem[]> {
+  const { data, error } = await supabaseAdmin
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, cover_image_url, category:blog_categories(name)")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (error || !data) return [];
+
+  return (data as unknown as RawBlogRow[]).map((row) => {
+    const category = Array.isArray(row.category) ? row.category[0] : row.category;
+    return {
+      id: row.id,
+      title: row.title,
+      slug: row.slug,
+      excerpt: row.excerpt,
+      coverImageUrl: row.cover_image_url,
+      category: category?.name ?? null,
+    };
+  });
+}
+
+const getCachedBlogs = unstable_cache(getBlogs, ["portfolio-blog"], {
+  revalidate: 60,
+  tags: ["portfolio-blog"],
+});
+
 const getCachedProfile = unstable_cache(
   async () => {
     const { data, error } = await supabaseAdmin
@@ -61,7 +97,11 @@ const getCachedProfile = unstable_cache(
 );
 
 export default async function Page() {
-  const [works, profile] = await Promise.all([getCachedWorks(), getCachedProfile()]);
+  const [works, blogs, profile] = await Promise.all([
+    getCachedWorks(),
+    getCachedBlogs(),
+    getCachedProfile(),
+  ]);
 
   const safeProfile = profile ?? {
     id: 0,
@@ -80,5 +120,5 @@ export default async function Page() {
     instagram_url: null,
     updated_at: new Date().toISOString(),
   };
-  return <HomeClient works={works} profile={safeProfile} />;
+  return <HomeClient works={works} blogs={blogs} profile={safeProfile} />;
 }

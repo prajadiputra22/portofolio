@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1"],
   experimental: {
     // Inline CSS ke HTML: menghilangkan request CSS yang render-blocking
     inlineCss: true,
