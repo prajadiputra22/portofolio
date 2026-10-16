@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { unstable_cache } from "next/cache";
-import HomeClient, { type BlogItem, type WorkItem } from "./HomeClient";
+import HomeClient, {
+  type BlogItem,
+  type WorkItem,
+} from "@/components/portfolio/HomeClient";
 
 type RawSkill = { id: string; name: string; icon_url: string | null };
 type RawBlogRow = {

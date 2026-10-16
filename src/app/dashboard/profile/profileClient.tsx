@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import DashboardShell from "@/components/Dashboardshell";
+import { AppIcon } from "@/components/AppIcon";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 
 export type Profile = {
   id: number;

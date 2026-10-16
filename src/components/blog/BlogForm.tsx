@@ -19,6 +19,127 @@ const slugify = (s: string) =>
 const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
 
+function editorToMarkdown(editor: HTMLElement) {
+  const alphaMarker = (index: number) => {
+    let value = index + 1;
+    let marker = "";
+    while (value > 0) {
+      value -= 1;
+      marker = String.fromCharCode(97 + (value % 26)) + marker;
+      value = Math.floor(value / 26);
+    }
+    return marker;
+  };
+
+  const inline = (node: Node): string => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
+    if (!(node instanceof HTMLElement)) return "";
+
+    const children = Array.from(node.childNodes).map(inline).join("");
+    switch (node.tagName) {
+      case "BR":
+        return "\n";
+      case "B":
+      case "STRONG":
+        return `**${children}**`;
+      case "I":
+      case "EM":
+        return `*${children}*`;
+      case "U":
+        return `++${children}++`;
+      case "CODE":
+        return `\`${children}\``;
+      case "A": {
+        const href = node.getAttribute("href") ?? "";
+        return /^(https?:\/\/|\/)/i.test(href)
+          ? `[${children}](${href.replace(/\)/g, "%29")})`
+          : children;
+      }
+      case "IMG": {
+        const src = node.getAttribute("src") ?? "";
+        const alt = (node.getAttribute("alt") ?? "").replace(/]/g, "\\]");
+        return /^(https?:\/\/|\/)/i.test(src)
+          ? `![${alt}](${src.replace(/\)/g, "%29")})`
+          : "";
+      }
+      default:
+        return children;
+    }
+  };
+
+  const block = (node: Node): string => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent?.trim() ?? "";
+    if (!(node instanceof HTMLElement)) return "";
+
+    const children = Array.from(node.childNodes);
+    const content = () => children.map(block).filter(Boolean).join("\n\n");
+    switch (node.tagName) {
+      case "H1":
+        return `# ${children.map(inline).join("").trim()}`;
+      case "H2":
+        return `## ${children.map(inline).join("").trim()}`;
+      case "H3":
+        return `### ${children.map(inline).join("").trim()}`;
+      case "P":
+        return children.map(inline).join("").trim();
+      case "BLOCKQUOTE":
+        return content().split("\n").map((line) => `> ${line}`).join("\n");
+      case "UL":
+      case "OL":
+        return Array.from(node.children)
+          .filter((child): child is HTMLElement => child instanceof HTMLElement && child.tagName === "LI")
+          .map((item, index) => {
+            const isLowerAlphaList = node.tagName === "OL" && node.getAttribute("type") === "a";
+            const marker = node.tagName !== "OL"
+              ? "- "
+              : isLowerAlphaList
+                ? `${alphaMarker(index)}. `
+                : `${index + 1}. `;
+            const itemContent = Array.from(item.childNodes)
+              .filter((child) => !(child instanceof HTMLElement && ["UL", "OL"].includes(child.tagName)))
+              .map(inline)
+              .join("")
+              .trim();
+            const nestedLists = Array.from(item.children)
+              .filter((child): child is HTMLElement => child instanceof HTMLElement && ["UL", "OL"].includes(child.tagName))
+              .map((list) => block(list))
+              .join("\n")
+              .split("\n")
+              .map((line) => `  ${line}`)
+              .join("\n");
+            return [`${marker}${itemContent}`, nestedLists].filter(Boolean).join("\n");
+          })
+          .join("\n");
+      case "PRE":
+        return `\`\`\`\n${node.textContent ?? ""}\n\`\`\``;
+      case "TABLE": {
+        const rows = Array.from(node.querySelectorAll("tr")).map((row) =>
+          Array.from(row.children).map((cell) => inline(cell).trim())
+        );
+        if (!rows.length) return "";
+        const separator = rows[0].map(() => "---");
+        return [rows[0], separator, ...rows.slice(1)]
+          .map((row) => `| ${row.join(" | ")} |`)
+          .join("\n");
+      }
+      case "HR":
+        return "---";
+      case "DIV":
+        if (node.classList.contains("blog-code-block")) {
+          const code = node.querySelector("pre code")?.textContent ?? "";
+          const language = node.querySelector(".blog-code-header span:last-child")?.textContent;
+          const lang = language && language !== "Code snippet" ? language : "";
+          return `\`\`\`${lang}\n${code}\n\`\`\``;
+        }
+        return content() || children.map(inline).join("").trim();
+      default:
+        return content() || children.map(inline).join("").trim();
+    }
+  };
+
+  return Array.from(editor.childNodes).map(block).filter(Boolean).join("\n\n");
+}
+
 export default function BlogForm({ postId }: { postId?: string }) {
   const router = useRouter();
   const isEdit = Boolean(postId);
@@ -51,8 +172,12 @@ export default function BlogForm({ postId }: { postId?: string }) {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [removeCover, setRemoveCover] = useState(false);
+  const [editorCardHeight, setEditorCardHeight] = useState<number | null>(null);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const editorCardRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const statusCardRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Muat data saat mode edit
@@ -130,7 +255,6 @@ export default function BlogForm({ postId }: { postId?: string }) {
     }
   }
 
-  // Slug otomatis dari judul selama belum diedit manual
   useEffect(() => {
     if (!slugTouched) setSlug(slugify(title));
   }, [title, slugTouched]);
@@ -148,52 +272,154 @@ export default function BlogForm({ postId }: { postId?: string }) {
   const shownCover = coverPreview ?? (removeCover ? null : coverUrl);
   const publicUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/blog/${slug || "..."}`;
 
-  // ---------- Toolbar markdown ----------
-  function applyEdit(fn: (sel: string) => { text: string; select?: [number, number] }) {
-    const el = textareaRef.current;
-    if (!el) return;
-    const { selectionStart: s, selectionEnd: e } = el;
-    const { text, select } = fn(content.slice(s, e));
-    const next = content.slice(0, s) + text + content.slice(e);
-    setContent(next);
-    setShowPreview(false);
-    requestAnimationFrame(() => {
-      el.focus();
-      const [a, b] = select ?? [s + text.length, s + text.length];
-      el.setSelectionRange(s + a, s + b);
-    });
+  useEffect(() => {
+    if (!showPreview && !loading && editorRef.current) {
+      editorRef.current.innerHTML = renderMarkdown(content);
+    }
+  }, [showPreview, loading]);
+
+  useEffect(() => {
+    const updateEditorHeight = () => {
+      if (!window.matchMedia("(min-width: 1024px)").matches) {
+        setEditorCardHeight(null);
+        return;
+      }
+
+      const editorTop = editorCardRef.current?.getBoundingClientRect().top;
+      const statusBottom = statusCardRef.current?.getBoundingClientRect().bottom;
+      if (editorTop === undefined || statusBottom === undefined) return;
+
+      const nextHeight = Math.max(0, Math.round(statusBottom - editorTop));
+      setEditorCardHeight((current) => current === nextHeight ? current : nextHeight);
+    };
+
+    const observer = new ResizeObserver(updateEditorHeight);
+    if (sidebarRef.current) observer.observe(sidebarRef.current);
+    if (statusCardRef.current) observer.observe(statusCardRef.current);
+    window.addEventListener("resize", updateEditorHeight);
+    updateEditorHeight();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateEditorHeight);
+    };
+  }, [loading]);
+
+  function updateContentFromEditor() {
+    if (editorRef.current) setContent(editorToMarkdown(editorRef.current));
   }
 
-  const wrap = (before: string, after: string, placeholder: string) =>
-    applyEdit((sel) => {
-      const body = sel || placeholder;
-      return { text: before + body + after, select: [before.length, before.length + body.length] };
-    });
+  function applyList(type: "bullet" | "number" | "lower-alpha") {
+    const editor = editorRef.current;
+    const selection = window.getSelection();
+    const anchor = selection?.anchorNode;
+    if (!editor || !selection || !anchor || !editor.contains(anchor)) return;
 
-  const linePrefix = (prefix: string, placeholder: string) =>
-    applyEdit((sel) => {
-      const body = (sel || placeholder).split("\n").map((l) => prefix + l).join("\n");
-      return { text: (content && !content.endsWith("\n") ? "\n" : "") + body };
-    });
+    let block: HTMLElement | null =
+      anchor instanceof HTMLElement ? anchor : anchor.parentElement;
+    while (block && block !== editor && !["P", "H1", "H2", "H3", "DIV", "LI", "UL", "OL"].includes(block.tagName)) {
+      block = block.parentElement;
+    }
 
-  const codeBlock = () =>
-    applyEdit((sel) => {
-      const body = sel || "// code here";
-      return { text: "\n```ts\n" + body + "\n```\n" };
-    });
+    editor.focus();
 
-  const toolbar: { title: string; icon?: string; label?: string; run: () => void; active?: boolean }[] = [
-    { title: "Bold", icon: "format_bold", run: () => wrap("**", "**", "bold text") },
-    { title: "Italic", icon: "format_italic", run: () => wrap("*", "*", "italic text") },
-    { title: "Heading 1", label: "H1", run: () => linePrefix("# ", "Heading") },
-    { title: "Heading 2", label: "H2", run: () => linePrefix("## ", "Heading") },
-    { title: "Heading 3", label: "H3", run: () => linePrefix("### ", "Heading") },
-    { title: "Code Block", icon: "code_blocks", run: codeBlock },
-    { title: "Blockquote", icon: "format_quote", run: () => linePrefix("> ", "Quote") },
-    { title: "Bullet List", icon: "format_list_bulleted", run: () => linePrefix("- ", "List item") },
-    { title: "Link", icon: "link", run: () => wrap("[", "](https://)", "link text") },
-    { title: "Insert Image", icon: "image", run: () => wrap("![", "](https://)", "alt text") },
+    if (!block || block === editor) {
+      const directNode =
+        anchor.parentNode === editor
+          ? anchor
+          : anchor === editor
+            ? editor.childNodes.item(selection.anchorOffset)
+            : null;
+      if (!directNode && editor.childNodes.length > 0) return;
+      const list = document.createElement(type === "bullet" ? "ul" : "ol");
+      if (type === "lower-alpha") list.type = "a";
+      const item = document.createElement("li");
+      if (directNode) {
+        editor.insertBefore(list, directNode);
+        item.append(directNode);
+      } else {
+        item.append(document.createElement("br"));
+        editor.append(list);
+      }
+      list.append(item);
+      const range = document.createRange();
+      range.selectNodeContents(item);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      updateContentFromEditor();
+      return;
+    }
+
+    const list = block.tagName === "LI" ? block.parentElement : block;
+    if (list instanceof HTMLElement && ["UL", "OL"].includes(list.tagName)) {
+      if (type === "bullet" && list.tagName === "UL") return;
+      const replacement = document.createElement(type === "bullet" ? "ul" : "ol");
+      if (type === "lower-alpha") replacement.type = "a";
+      list.replaceWith(replacement);
+      while (list.firstChild) replacement.append(list.firstChild);
+      updateContentFromEditor();
+      return;
+    }
+
+    const newList = document.createElement(type === "bullet" ? "ul" : "ol");
+    if (type === "lower-alpha") newList.type = "a";
+    const item = document.createElement("li");
+    while (block.firstChild) item.append(block.firstChild);
+    if (!item.hasChildNodes()) item.append(document.createElement("br"));
+    newList.append(item);
+    block.replaceWith(newList);
+
+    const range = document.createRange();
+    range.selectNodeContents(item);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    updateContentFromEditor();
+  }
+
+  function runEditorCommand(command: string, value?: string) {
+    if (command === "insertUnorderedList") {
+      applyList("bullet");
+      return;
+    }
+    if (command === "insertOrderedList") {
+      applyList("number");
+      return;
+    }
+    if (command === "insertLowerAlphaList") {
+      applyList("lower-alpha");
+      return;
+    }
+    editorRef.current?.focus();
+    document.execCommand(command, false, value);
+    updateContentFromEditor();
+  }
+
+  const toolbar: { title: string; icon?: string; label?: string; command: string; value?: string }[] = [
+    { title: "Bold", icon: "format_bold", command: "bold" },
+    { title: "Italic", icon: "format_italic", command: "italic" },
+    { title: "Underline", label: "U", command: "underline" },
+    { title: "Heading 2", label: "H2", command: "formatBlock", value: "h2" },
+    { title: "Heading 3", label: "H3", command: "formatBlock", value: "h3" },
+    { title: "Paragraph", label: "P", command: "formatBlock", value: "p" },
+    { title: "Bullet List", icon: "format_list_bulleted", command: "insertUnorderedList" },
+    { title: "Numbered List", label: "1.", command: "insertOrderedList" },
+    { title: "Lowercase Letter List", label: "a.", command: "insertLowerAlphaList" },
+    { title: "Link", icon: "link", command: "createLink" },
+    { title: "Insert Image", icon: "image", command: "insertImage" },
+    { title: "Blockquote", icon: "format_quote", command: "formatBlock", value: "blockquote" },
   ];
+
+  function runToolbarAction(command: string, value?: string) {
+    if (command === "createLink" || command === "insertImage") {
+      const url = window.prompt(command === "createLink" ? "Enter the link URL" : "Enter the image URL");
+      if (!url?.trim()) return;
+      runEditorCommand(command, url.trim());
+      return;
+    }
+    runEditorCommand(command, value);
+  }
 
   // ---------- Tags ----------
   function addTag() {
@@ -230,13 +456,15 @@ export default function BlogForm({ postId }: { postId?: string }) {
     if (!title.trim()) return setError("Judul wajib diisi.");
     if (!categoryId) return setError("Kategori wajib dipilih.");
     if (excerpt.length > 250) return setError("Excerpt maksimal 250 karakter.");
-    if (nextStatus === "published" && !content.trim()) return setError("Konten wajib diisi sebelum dipublikasikan.");
+    const articleContent =
+      !showPreview && editorRef.current ? editorToMarkdown(editorRef.current) : content;
+    if (nextStatus === "published" && !articleContent.trim()) return setError("Konten wajib diisi sebelum dipublikasikan.");
 
     const fd = new FormData();
     fd.set("title", title.trim());
     fd.set("slug", slug);
     fd.set("excerpt", excerpt);
-    fd.set("content", content);
+    fd.set("content", articleContent);
     fd.set("category_id", categoryId);
     fd.set("tags", JSON.stringify(tags));
     fd.set("featured", String(featured));
@@ -425,17 +653,23 @@ export default function BlogForm({ postId }: { postId?: string }) {
             </div>
 
             {/* Editor */}
-            <div className="flex flex-col rounded bg-surface-container overflow-hidden">
+            <div
+              ref={editorCardRef}
+              style={editorCardHeight === null ? undefined : { height: editorCardHeight }}
+              className="flex h-[520px] flex-col rounded bg-surface-container overflow-hidden lg:h-auto"
+            >
               <div className="flex flex-wrap items-center gap-1 p-2 bg-surface-container-high text-on-surface-variant font-label-mono">
                 {toolbar.map((t, i) => (
                   <span key={t.title} className="contents">
-                    {(i === 2 || i === 5 || i === 8) && <div className="w-px h-5 bg-surface-container mx-1" />}
+                    {(i === 3 || i === 6 || i === 9) && <div className="w-px h-5 bg-surface-container mx-1" />}
                     <button
                       type="button"
                       title={t.title}
-                      onClick={t.run}
+                      aria-label={t.title}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => runToolbarAction(t.command, t.value)}
                       disabled={showPreview}
-                      className="w-8 h-8 rounded hover:bg-surface-bright hover:text-on-surface flex items-center justify-center transition-colors disabled:opacity-40"
+                      className="min-w-8 h-8 rounded border border-outline-variant/50 bg-surface-container-lowest px-2 hover:bg-surface-bright hover:text-on-surface flex items-center justify-center transition-colors disabled:opacity-40"
                     >
                       {t.icon ? (
                         <AppIcon name={t.icon as never} className="size-[18px]" />
@@ -446,7 +680,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
                   </span>
                 ))}
                 <div className="ml-auto flex items-center gap-2">
-                  <span className="text-caption font-label-mono text-on-surface-variant pr-2 hidden sm:inline">MARKDOWN SUPPORTED</span>
+                  <span className="text-caption font-label-mono text-on-surface-variant pr-2 hidden sm:inline">RICH TEXT</span>
                   <button
                     type="button"
                     onClick={() => setShowPreview((v) => !v)}
@@ -460,19 +694,23 @@ export default function BlogForm({ postId }: { postId?: string }) {
 
               {showPreview ? (
                 <div
-                  className="p-6 flex flex-col gap-4 font-body-md text-body-md text-on-surface leading-relaxed min-h-[380px]"
+                  className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 flex flex-col gap-4 font-body-md text-body-md text-on-surface leading-relaxed"
                   dangerouslySetInnerHTML={{
                     __html: html || '<p class="text-on-surface-variant italic">Nothing to preview yet.</p>',
                   }}
                 />
               ) : (
-                <textarea
-                  ref={textareaRef}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Start writing in Markdown..."
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  role="textbox"
+                  aria-label="Article content"
+                  aria-multiline="true"
+                  data-placeholder="Start writing your article..."
+                  onInput={updateContentFromEditor}
                   spellCheck
-                  className="p-6 bg-transparent text-on-surface font-label-mono text-[14px] leading-relaxed min-h-[380px] outline-none resize-y w-full"
+                  className="blog-content-editor min-h-0 w-full flex-1 overflow-y-auto overscroll-contain p-6 outline-none bg-surface-container-lowest text-on-surface font-body-md text-body-md leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-on-surface-variant [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_p]:my-3 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol>li]:list-item [&_blockquote]:border-l-2 [&_blockquote]:border-secondary [&_blockquote]:pl-4 [&_blockquote]:italic"
                 />
               )}
 
@@ -494,7 +732,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
         </div>
 
         {/* Right: sidebar */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
+        <div ref={sidebarRef} className="lg:col-span-4 flex flex-col gap-6">
           {/* Cover */}
           <div className="bg-surface-container-low rounded-xl p-5 flex flex-col gap-4 shadow-sm">
             <div className="flex items-center justify-between">
@@ -663,7 +901,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
           </div>
 
           {/* Status */}
-          <div className="bg-surface-container-low rounded-xl p-5 flex flex-col gap-4 shadow-sm">
+          <div ref={statusCardRef} className="bg-surface-container-low rounded-xl p-5 flex flex-col gap-4 shadow-sm">
             <h2 className="text-caption uppercase tracking-wider text-secondary font-semibold">Publication Status &amp; Stats</h2>
             <div className="flex flex-col gap-3 text-caption">
               <div className="flex items-center justify-between py-1.5 border-b border-surface-container">

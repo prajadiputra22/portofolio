@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import SkillsInput from "@/components/SkillsInput";
-import DashboardShell from "@/components/Dashboardshell";
+import SkillsInput from "@/components/dashboard/SkillsInput";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AppIcon } from "@/components/AppIcon";
 
 const DESCRIPTION_MAX_LENGTH = 100;

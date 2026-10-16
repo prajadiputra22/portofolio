@@ -23,6 +23,7 @@ function inline(raw: string) {
   );
   s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   s = s.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
+  s = s.replace(/\+\+([^+]+)\+\+/g, "<u>$1</u>");
   return s;
 }
 
@@ -148,6 +149,15 @@ export function renderMarkdown(md: string) {
       continue;
     }
 
+    if (/^[a-z][.)]\s+/.test(line)) {
+      const items: string[] = [];
+      while (i < lines.length && /^[a-z][.)]\s+/.test(lines[i])) {
+        items.push(lines[i++].replace(/^[a-z][.)]\s+/, ""));
+      }
+      out.push(`<ol type="a">${items.map((t) => `<li>${inline(t)}</li>`).join("")}</ol>`);
+      continue;
+    }
+
     if (/^\d+[.)]\s+/.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^\d+[.)]\s+/.test(lines[i])) {
@@ -170,6 +180,7 @@ export function renderMarkdown(md: string) {
       !/^#{1,3}\s/.test(lines[i]) &&
       !lines[i].startsWith("> ") &&
       !/^[-*]\s+/.test(lines[i]) &&
+      !/^[a-z][.)]\s+/.test(lines[i]) &&
       !/^\d+[.)]\s+/.test(lines[i]) &&
       !/^([-*_])(?:\s*\1){2,}\s*$/.test(lines[i]) &&
       !(

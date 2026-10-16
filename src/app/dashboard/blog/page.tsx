@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import DashboardShell from "@/components/Dashboardshell";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AppIcon } from "@/components/AppIcon";
 import type { BlogListItem, PostStatus } from "@/types/blog";
 

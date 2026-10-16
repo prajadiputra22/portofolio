@@ -1,8 +1,8 @@
 "use client";
 
 import { use } from "react";
-import DashboardShell from "@/components/Dashboardshell";
-import BlogForm from "@/components/dashboard/BlogForm";
+import DashboardShell from "@/components/dashboard/DashboardShell";
+import BlogForm from "@/components/blog/BlogForm";
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

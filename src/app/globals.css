@@ -189,21 +189,54 @@ body {
 
 .blog-prose ul,
 .blog-prose ol {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+  display: block;
   margin: 1.25rem 0 1.75rem;
   padding-left: 1.5rem;
   color: #c6c6cd;
   line-height: 1.8;
 }
 
+.blog-prose li + li {
+  margin-top: 0.65rem;
+}
+
 .blog-prose ul {
-  list-style: disc;
+  list-style: none;
+}
+
+.blog-prose ul > li,
+.blog-content-editor ul > li {
+  position: relative;
+  display: block;
+  list-style: none;
+}
+
+.blog-prose ul > li::before,
+.blog-content-editor ul > li::before {
+  position: absolute;
+  left: -1.15rem;
+  color: #7bd0ff;
+  content: "•";
 }
 
 .blog-prose ol {
   list-style: decimal;
+}
+
+.blog-prose ol > li,
+.blog-content-editor ol > li {
+  display: list-item;
+  list-style-type: decimal;
+}
+
+.blog-prose ol[type="a"],
+.blog-content-editor ol[type="a"] {
+  list-style-type: lower-alpha;
+}
+
+.blog-prose ol[type="a"] > li,
+.blog-content-editor ol[type="a"] > li {
+  list-style-type: lower-alpha;
 }
 
 .blog-prose li::marker {

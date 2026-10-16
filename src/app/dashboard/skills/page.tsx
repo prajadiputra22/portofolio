@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import ManageSkillsClient from "@/components/Manageskillsclient";
-import DashboardShell from "@/components/Dashboardshell";
+import ManageSkillsClient from "@/components/dashboard/ManageSkillsClient";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import type { Skill } from "@/types/skill";
 
 async function getSkills(): Promise<Skill[]> {

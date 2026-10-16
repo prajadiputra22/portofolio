@@ -1,6 +1,6 @@
 "use client";
 
-import DashboardShell from "@/components/Dashboardshell";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AppIcon } from "@/components/AppIcon";
 
 const quickActions = [

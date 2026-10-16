@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
+import { getServerSession } from "@/lib/auth/server-session";
 import type { Profile } from "@/types/profile";
 
 const EDITABLE_FIELDS = [
@@ -21,18 +20,9 @@ const EDITABLE_FIELDS = [
   "instagram_url",
 ] as const;
 
-async function requireSession() {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
-}
-
 export async function GET() {
-  const user = await requireSession();
-  if (!user) {
+  const session = await getServerSession();
+  if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -50,8 +40,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const user = await requireSession();
-  if (!user) {
+  const session = await getServerSession();
+  if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

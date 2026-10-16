@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import DashboardShell from "@/components/Dashboardshell";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AppIcon } from "@/components/AppIcon";
 
 type Skill = {

@@ -12,35 +12,18 @@
 
 ```text
 src/
-├── app/
-│   ├── api/
-│   │   ├── auth/                 # Login, lupa password, dan reset password
-│   │   ├── profile/              # Membaca/mengubah profil dan unggah avatar
-│   │   ├── skills/               # CRUD skill
-│   │   └── works/                # CRUD proyek
-│   ├── dashboard/
-│   │   ├── blog/                 # Halaman pengelolaan blog
-│   │   ├── profile/              # Pengelolaan profil
-│   │   ├── skills/               # Pengelolaan skill
-│   │   └── works/                # Daftar, tambah, dan edit proyek
-│   ├── forgot-password/          # Halaman permintaan reset password
-│   ├── login/                    # Halaman login admin
-│   ├── reset-password/           # Halaman reset password
-│   ├── HomeClient.tsx            # UI interaktif halaman portofolio
-│   ├── globals.css               # Gaya global dan animasi
-│   ├── layout.tsx                # Layout root, font, dan metadata
-│   └── page.tsx                  # Pengambilan data beranda dari Supabase
-├── components/                   # Komponen bersama dan UI dashboard
-├── lib/
-│   ├── auth/                     # Pembuatan token sesi
-│   ├── supabase/                 # Klien Supabase admin
-│   └── works/                    # Operasi relasi skill dengan proyek
-├── middleware.ts                 # Middleware aplikasi
-├── types/                        # Tipe data TypeScript
-└── utils/supabase/               # Klien Supabase browser/server/admin
-
-public/                            # Aset statis
+├── app/                          # Route Next.js, halaman, API, dan metadata
+├── components/
+│   ├── blog/                     # UI blog
+│   ├── dashboard/                # UI admin
+│   └── portfolio/                # UI portofolio publik
+├── lib/                          # Logika autentikasi, blog, dan domain
+├── middleware.ts                 # Proteksi route dashboard
+├── types/                        # Tipe domain
+└── utils/supabase/               # Klien Supabase
 ```
+
+Dokumentasi alur halaman, alur data, dan tema visual ada di [struktur-alur-dan-tema.md](./struktur-alur-dan-tema.md).
 
 ## Skema database
 

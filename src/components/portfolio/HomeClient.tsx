@@ -35,23 +35,23 @@ const services: {
 }[] = [
   {
     icon: "web",
-    title: "Front End Developer",
+    title: "FrontEnd Developer",
     description:
-      "Crafting responsive, pixel-perfect interfaces using modern frameworks like React and Next.js, with a focus on performance and user-centric design.",
+      "Mengembangkan antarmuka web yang responsif dan menarik dengan React dan Next.js, mengutamakan kecepatan, kenyamanan, dan pengalaman pengguna.",
     points: ["UI/UX Translation", "Interactive Components", "Responsive Layouts"],
   },
   {
     icon: "dns",
     title: "Backend Developer",
     description:
-      "Building robust server-side logic and database architectures. Experienced in API design, authentication, and secure data management systems.",
+      "Membangun logika server-side dan arsitektur database yang tangguh. Berpengalaman dalam desain API, autentikasi, dan sistem manajemen data yang aman.",
     points: ["API Development", "Database Design", "Server Management"],
   },
   {
     icon: "integration_instructions",
     title: "Fullstack Developer",
     description:
-      "Delivering end-to-end solutions by bridging the gap between design and data. Mastery of the entire development lifecycle from concept to deployment.",
+      "Menghubungkan desain, sistem, dan data untuk membangun solusi digital yang terintegrasi, dari tahap perencanaan hingga siap digunakan.",
     points: ["System Integration", "DevOps Workflows", "Scalable Solutions"],
   },
 ];
@@ -157,7 +157,7 @@ export default function HomeClient({
             <div className="md:order-1 w-full md:w-1/2 max-w-2xl text-center md:text-left">
               <Reveal instant>
                 <p className="font-label-mono text-[11px] md:text-label-mono text-secondary mb-3 md:mb-4 tracking-[0.2em] uppercase">
-                  HI, I&apos;M <span className="text-secondary">{profile.hero_greeting}</span>
+                  HI, SAYA <span className="text-secondary">{profile.hero_greeting}</span>
                 </p>
               </Reveal>
               <Reveal instant>
@@ -177,13 +177,13 @@ export default function HomeClient({
                     className="bg-secondary text-on-secondary px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono font-bold hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary/20"
                     href="#works"
                   >
-                    VIEW WORKS
+                    Lihat Proyek
                   </a>
                   <a
                     className="border border-outline-variant px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-label-mono text-[11px] md:text-label-mono hover:bg-surface-variant/30 transition-all"
                     href="#contact"
                   >
-                    HIRE ME
+                    Hubungi Saya
                   </a>
                 </div>
               </Reveal>
@@ -198,7 +198,7 @@ export default function HomeClient({
         >
           <Reveal className="mb-10 md:mb-16">
             <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
-              Core Expertise
+              Bidang Keahlian
             </h2>
             <div className="h-1 w-20 bg-secondary" />
           </Reveal>
@@ -233,7 +233,7 @@ export default function HomeClient({
             <Reveal className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
-                  Selected Works
+                  Proyek Saya
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
@@ -291,7 +291,7 @@ export default function HomeClient({
                               target="_blank"
                               rel="noreferrer"
                             >
-                              CASE STUDY{" "}
+                              KUNJUNGI PROYEK{" "}
                               <AppIcon
                                 name="arrow_right_alt"
                                 className="size-4 transition-transform group-hover/link:translate-x-1"
@@ -365,12 +365,12 @@ export default function HomeClient({
             <Reveal className="mb-10 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <h2 className="font-headline-lg-mobile text-2xl md:text-headline-lg-mobile md:font-headline-lg md:text-headline-lg mb-3 md:mb-4">
-                  Latest Insights
+                  Wawasan Terbaru
                 </h2>
                 <div className="h-1 w-20 bg-secondary" />
               </div>
               <p className="font-label-mono text-caption text-on-surface-variant uppercase tracking-wider max-w-xs">
-                Thoughts on architecture, performance, and the web.
+                Berbagi pemikiran seputar arsitektur sistem, performa, dan pengembangan web.
               </p>
             </Reveal>
 
@@ -412,7 +412,7 @@ export default function HomeClient({
                           {blog.excerpt}
                         </p>
                         <span className="text-secondary font-label-mono text-caption flex items-center gap-2">
-                          READ MORE
+                          BACA LEBIH LANJUT
                           <AppIcon name="arrow_right_alt" className="size-4" />
                         </span>
                       </div>
@@ -431,13 +431,13 @@ export default function HomeClient({
               <div>
                 <Reveal>
                   <h2 className="font-display-lg-mobile text-[28px] leading-[34px] md:text-display-lg-mobile mb-4 md:mb-6">
-                    Let&apos;s <span className="text-secondary">Talk.</span>
+                    Mari <span className="text-secondary"> Berkolaborasi.</span>
                   </h2>
                 </Reveal>
                 <Reveal>
                   <p className="text-sm md:text-body-lg text-on-surface-variant mb-8 md:mb-12 max-w-md">
-                    Have a complex problem that needs a clean solution? Drop me a message and
-                    let&apos;s build something exceptional.
+                    Punya ide menarik atau tantangan yang perlu diselesaikan? Mari berkolaborasi 
+                    untuk mewujudkannyamenjadi solusi digital yang efektif dan bermakna.
                   </p>
                 </Reveal>
                 <div className="space-y-6 md:space-y-8">
@@ -447,7 +447,7 @@ export default function HomeClient({
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
-                        Location
+                        Lokasi
                       </p>
                       <p className="font-body-md text-sm md:text-base">{profile.location}</p>
                     </div>
@@ -458,7 +458,7 @@ export default function HomeClient({
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
-                        Phone Number
+                        No. Hp
                       </p>
                       <p className="font-body-md text-sm md:text-base">{profile.phone}</p>
                     </div>
@@ -469,7 +469,7 @@ export default function HomeClient({
                     </div>
                     <div>
                       <p className="font-label-mono text-caption text-on-tertiary-container uppercase">
-                        Email Address
+                        Email
                       </p>
                       <p className="font-body-md text-sm md:text-base break-all">{profile.email}</p>
                     </div>
@@ -526,11 +526,11 @@ export default function HomeClient({
                 >
                   <div>
                     <label className="block font-label-mono text-caption uppercase text-on-surface-variant mb-2">
-                      Full Name
+                      Nama Lengkap
                     </label>
                     <input
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all"
-                      placeholder="Your Name..."
+                      placeholder="Nama Lengkap..."
                       type="text"
                       name="name"
                       required
@@ -538,7 +538,7 @@ export default function HomeClient({
                   </div>
                   <div>
                     <label className="block font-label-mono text-caption uppercase text-on-surface-variant mb-2">
-                      Email Address
+                      Email
                     </label>
                     <input
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all"
@@ -550,11 +550,11 @@ export default function HomeClient({
                   </div>
                   <div>
                     <label className="block font-label-mono text-caption uppercase text-on-surface-variant mb-2">
-                      Project Message
+                      Pesan Proyek
                     </label>
                     <textarea
                       className="w-full bg-background border border-outline-variant focus:border-secondary focus:ring-0 rounded-lg p-3 md:p-4 text-sm md:text-base transition-all resize-none"
-                      placeholder="Tell me about your project..."
+                      placeholder="Ceritakan tentang proyek Anda..."
                       rows={4}
                       name="message"
                       required
@@ -568,14 +568,14 @@ export default function HomeClient({
                     {formStatus === "loading" ? (
                       <>
                         <AppIcon name="progress_activity" className="animate-spin text-lg" />
-                        SENDING...
+                        MENGIRIM...
                       </>
                     ) : formStatus === "success" ? (
-                      "MESSAGE SENT ✓"
+                      "PESAN TERKIRIM ✓"
                     ) : formStatus === "error" ? (
-                      "FAILED, TRY AGAIN"
+                      "GAGAL, COBA LAGI"
                     ) : (
-                      "SEND MESSAGE"
+                      "KIRIM PESAN"
                     )}
                   </button>
                 </form>
